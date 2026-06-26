@@ -6,9 +6,9 @@
 
 | 폴더 | 내용 |
 | --- | --- |
-| `00_templates` | 문서 템플릿, 공통 작성 규칙 |
-| `01_basic` | 정렬, 이분 탐색, 재귀, 비트 연산 |
-| `02_data_structure` | 스택, 큐, 해시, 힙, 트리, 구간 질의 자료구조 |
+| `00_templates` | 문서 템플릿, Python 입출력, STL |
+| `01_basic` | 정렬, 이분 탐색, 재귀, 비트 연산, 버킷 |
+| `02_data_structure` | 스택, 큐, 덱, 해시, 힙, 트리, 구간 질의 자료구조 |
 | `03_combinatorics` | 순열, 조합, 부분집합 |
 | `04_graph` | BFS, DFS, 위상 정렬, MST, 최단 경로, SCC, BCC |
 | `05_dp` | DP, 메모이제이션, LIS, 배낭, 트리 DP, 비트마스크 DP |
@@ -18,20 +18,26 @@
 
 ## Basic
 
+- [Python 입출력](00_templates/python_io/python_io.md)
+- [STL](00_templates/stl/stl.md)
 - [정렬](01_basic/sorting/sorting.md)
 - [이분 탐색](01_basic/binary_search/binary_search.md)
 - [재귀](01_basic/recursion/recursion.md)
 - [비트 연산](01_basic/bit_operation/bit_operation.md)
+- [버킷](01_basic/bucket/bucket.md)
 
 ## Data Structure
 
 - [스택](02_data_structure/stack/stack.md)
+- [큐](02_data_structure/queue/queue.md)
+- [덱](02_data_structure/deque/deque.md)
 - [원형 큐](02_data_structure/circular_queue/circular_queue.md)
 - [연결 리스트](02_data_structure/linked_list/linked_list.md)
 - [해시](02_data_structure/hash/hash.md)
 - [힙](02_data_structure/heap/heap.md)
 - [BST](02_data_structure/bst/bst.md)
 - [서로소 집합](02_data_structure/disjoint_set/disjoint_set.md)
+- [Fenwick Tree](02_data_structure/fenwick_tree/fenwick_tree.md)
 - [세그먼트 트리](02_data_structure/segment_tree/segment_tree.md)
 - [Lazy Propagation](02_data_structure/lazy_propagation/lazy_propagation.md)
 - [Sparse Table](02_data_structure/sparse_table/sparse_table.md)
