@@ -39,6 +39,7 @@ problems/
 - [정렬](algorithm/01_basic/sorting/sorting.md)
 - [버킷](algorithm/01_basic/bucket/bucket.md)
 - [이분 탐색](algorithm/01_basic/binary_search/binary_search.md)
+- [그리디](algorithm/01_basic/greedy/greedy.md)
 - [재귀](algorithm/01_basic/recursion/recursion.md)
 - [비트 연산](algorithm/01_basic/bit_operation/bit_operation.md)
 

@@ -12,6 +12,7 @@ JUNGOL 문제 풀이를 저장하는 폴더입니다.
 
 ```text
 silver/1997_TigerEatingRiceCakes.py
+gold/1183_CoinVendingMachine.py
 ```
 
 ## 템플릿
@@ -33,6 +34,7 @@ def solution():
 
 ```python
 # JUNGOL 0000 문제이름
+# 난이도:
 # 분류:
 # 핵심:
 # 시간 복잡도:
@@ -44,6 +46,7 @@ def solution():
 ```text
 sorting
 binary_search
+greedy
 stack
 queue
 deque
@@ -58,9 +61,10 @@ brute_force
 
 ## 풀이 기록
 
-| 문제 | 분류 | 핵심 |
-| --- | --- | --- |
-| [1997 떡 먹는 호랑이](silver/1997_TigerEatingRiceCakes.py) | dp, brute_force, fibonacci | D일째 떡 개수를 `x*A + y*B`로 표현하고, A를 대입해 B를 찾는다 |
+| 문제 | 난이도 | 분류 | 핵심 |
+| --- | --- | --- | --- |
+| [1997 떡 먹는 호랑이](silver/1997_TigerEatingRiceCakes.py) | silver | dp, brute_force, fibonacci | D일째 떡 개수를 `x*A + y*B`로 표현하고, A를 대입해 B를 찾는다 |
+| [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다 |
 
 ## 복습 표시
 

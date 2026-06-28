@@ -6,7 +6,7 @@
 
 | 단계 | 주제 | 문서 |
 | --- | --- | --- |
-| 1 | 풀이 기본기 | [Python 입출력](00_templates/python_io/python_io.md), [시간복잡도와 공간복잡도](00_templates/complexity/complexity.md), [정렬](01_basic/sorting/sorting.md), [버킷](01_basic/bucket/bucket.md), [이분 탐색](01_basic/binary_search/binary_search.md), [재귀](01_basic/recursion/recursion.md), [비트 연산](01_basic/bit_operation/bit_operation.md) |
+| 1 | 풀이 기본기 | [Python 입출력](00_templates/python_io/python_io.md), [시간복잡도와 공간복잡도](00_templates/complexity/complexity.md), [정렬](01_basic/sorting/sorting.md), [버킷](01_basic/bucket/bucket.md), [이분 탐색](01_basic/binary_search/binary_search.md), [그리디](01_basic/greedy/greedy.md), [재귀](01_basic/recursion/recursion.md), [비트 연산](01_basic/bit_operation/bit_operation.md) |
 | 2 | 기본 자료구조 | [스택](02_data_structure/stack/stack.md), [큐](02_data_structure/queue/queue.md), [덱](02_data_structure/deque/deque.md), [해시](02_data_structure/hash/hash.md), [힙](02_data_structure/heap/heap.md), [BST](02_data_structure/bst/bst.md) |
 | 3 | 완전 탐색 | [순열](03_combinatorics/permutation/permutation.md), [조합](03_combinatorics/combination/combination.md), [부분집합](03_combinatorics/subset/subset.md) |
 | 4 | 그래프 기본 | [BFS](04_graph/bfs/bfs.md), [DFS](04_graph/dfs/dfs.md), [위상 정렬](04_graph/topological_sort/topological_sort.md) |
@@ -16,24 +16,16 @@
 | 8 | 문자열 | [문자열 매칭](06_string/string_matching/string_matching.md), [KMP](06_string/kmp/kmp.md), [Trie](06_string/trie/trie.md), [Rolling Hash](06_string/rolling_hash/rolling_hash.md) |
 | 9 | 기하/최적화 | [CCW](07_geometry/ccw/ccw.md), [각도 정렬](07_geometry/angle_sort/angle_sort.md), [볼록 껍질](07_geometry/convex_hull/convex_hull.md), [스위핑](07_geometry/sweeping/sweeping.md), [좌표 압축](08_optimization/coordinate_compression/coordinate_compression.md), [오프라인 쿼리](08_optimization/offline_query/offline_query.md) |
 
-## 분류별 목차
-
-### Templates
-
-- [알고리즘 문서 템플릿](00_templates/algorithm_note_template.md)
-- [시간복잡도와 공간복잡도](00_templates/complexity/complexity.md)
-- [Python 입출력](00_templates/python_io/python_io.md)
-- [STL 대응표](00_templates/stl/stl.md)
-
-### Basic
+## Basic
 
 - [정렬](01_basic/sorting/sorting.md)
 - [버킷](01_basic/bucket/bucket.md)
 - [이분 탐색](01_basic/binary_search/binary_search.md)
+- [그리디](01_basic/greedy/greedy.md)
 - [재귀](01_basic/recursion/recursion.md)
 - [비트 연산](01_basic/bit_operation/bit_operation.md)
 
-### Data Structure
+## Data Structure
 
 - [스택](02_data_structure/stack/stack.md)
 - [큐](02_data_structure/queue/queue.md)
@@ -49,13 +41,13 @@
 - [Lazy Propagation](02_data_structure/lazy_propagation/lazy_propagation.md)
 - [Sparse Table](02_data_structure/sparse_table/sparse_table.md)
 
-### Combinatorics
+## Combinatorics
 
 - [순열](03_combinatorics/permutation/permutation.md)
 - [조합](03_combinatorics/combination/combination.md)
 - [부분집합](03_combinatorics/subset/subset.md)
 
-### Graph
+## Graph
 
 - [BFS](04_graph/bfs/bfs.md)
 - [DFS](04_graph/dfs/dfs.md)
@@ -67,7 +59,7 @@
 - [SCC](04_graph/scc/scc.md)
 - [BCC](04_graph/bcc/bcc.md)
 
-### DP
+## DP
 
 - [DP 기본](05_dp/dp.md)
 - [메모이제이션](05_dp/memoization/memoization.md)
@@ -76,28 +68,21 @@
 - [트리 DP](05_dp/tree_dp/tree_dp.md)
 - [비트마스크 DP](05_dp/bitmask_dp/bitmask_dp.md)
 
-### String
+## String
 
 - [문자열 매칭](06_string/string_matching/string_matching.md)
 - [KMP](06_string/kmp/kmp.md)
 - [Trie](06_string/trie/trie.md)
 - [Rolling Hash](06_string/rolling_hash/rolling_hash.md)
 
-### Geometry
+## Geometry
 
 - [CCW](07_geometry/ccw/ccw.md)
 - [각도 정렬](07_geometry/angle_sort/angle_sort.md)
 - [볼록 껍질](07_geometry/convex_hull/convex_hull.md)
 - [스위핑](07_geometry/sweeping/sweeping.md)
 
-### Optimization
+## Optimization
 
 - [좌표 압축](08_optimization/coordinate_compression/coordinate_compression.md)
 - [오프라인 쿼리](08_optimization/offline_query/offline_query.md)
-
-## 문서 작성 원칙
-
-- 정의보다 "언제 쓰는지"를 먼저 떠올릴 수 있게 적는다.
-- 코드 템플릿은 외워서 칠 수 있는 길이로 유지한다.
-- 비슷한 알고리즘은 비교표를 함께 둔다.
-- 문제를 풀면 관련 문서 하단에 문제 번호와 핵심 아이디어를 추가한다.
