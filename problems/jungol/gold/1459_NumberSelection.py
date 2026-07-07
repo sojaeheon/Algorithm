@@ -2,9 +2,10 @@
 # 티어: gold
 # 분류: dfs, graph, cycle
 # 핵심:
-#   각 숫자 i에서 numbers[i]로 가는 함수형 그래프로 보고,
-#   사이클에 포함되는 정점들을 정답으로 고른다.
-# 시간 복잡도: O(N)
+#   위칸 숫자 i에서 아래칸 숫자 numbers[i]로 이동한다고 생각한다.
+#   어떤 시작점에서 출발해 다시 시작점으로 돌아올 수 있으면,
+#   그 과정의 숫자들은 선택 가능한 숫자이다.
+# 시간 복잡도: O(N^2)
 # 공간 복잡도: O(N)
 
 
@@ -16,26 +17,41 @@
 #   첫 줄: 고른 숫자의 개수
 #   이후 줄: 고른 숫자를 오름차순으로 한 줄에 하나씩 출력
 # - 구해야 하는 것:
-#   선택한 위칸 숫자 집합과 그 아래칸 숫자 집합이 같아지는 최대 집합
-# - 조건
-#   - 1<=N<=100
+#   선택한 위칸 숫자 집합과 아래칸 숫자 집합이 같아지는 최대 집합
+# - 조건:
+#   1 <= N <= 100
+
 
 # 2. 아이디어
-# - TODO: 어떤 규칙이 있는가?
-# - TODO: 어떤 값을 상태로 둘 것인가?
-# - TODO: 완전 탐색 / DFS / 그래프 / 자료구조 중 어떤 방식이 어울리는가?
+# - i -> numbers[i] 로 이동하는 그래프로 본다.
+# - start에서 출발해서 numbers를 계속 따라간다.
+# - 이동 중 다시 start를 만나면 start는 정답에 포함될 수 있다.
+# - 모든 숫자를 start로 한 번씩 검사한다.
 
 
 # 3. 구현 계획
-# 1)
-# 2)
-# 3)
+# 1) 1번부터 N번까지 각각 시작점으로 둔다.
+# 2) 시작점마다 방문 배열을 새로 만들고 numbers를 따라간다.
+# 3) 따라가다가 start를 다시 만나면 정답에 추가한다.
+# 4) 정답 개수와 정답 숫자들을 출력한다.
 
 
 def solution(N, numbers):
-    # TODO: 문제 해결 로직 작성
-    # return answer
-    pass
+    answer = []
+
+    for start in range(1, N + 1):
+        visited = [False] * (N + 1)
+        current = start
+
+        while not visited[current]:
+            visited[current] = True
+            current = numbers[current]
+
+            if current == start:
+                answer.append(start)
+                break
+
+    return answer
 
 
 if __name__ == "__main__":
@@ -47,7 +63,6 @@ if __name__ == "__main__":
 
     answer = solution(N, numbers)
 
-    # TODO: 정답 출력 형식에 맞게 수정
-    # print(len(answer))
-    # for number in answer:
-    #     print(number)
+    print(len(answer))
+    for number in answer:
+        print(number)
