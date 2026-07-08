@@ -15,6 +15,7 @@ silver/1997_TigerEatingRiceCakes.py
 gold/1183_CoinVendingMachine.py
 gold/1459_NumberSelection.py
 gold/2468_Password.py
+platinum/1214_Histogram.py
 ```
 
 ## 템플릿
@@ -62,6 +63,7 @@ brute_force
 bitmask
 math
 cycle
+monotone_stack
 ```
 
 ## 풀이 기록
@@ -72,8 +74,19 @@ cycle
 | [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다. |
 | [1459 숫자고르기](gold/1459_NumberSelection.py) | gold | dfs, graph, cycle | `i -> numbers[i]` 형태의 함수형 그래프로 보고, 시작점으로 다시 돌아오는 숫자를 고른다. |
 | [2468 비밀번호](gold/2468_Password.py) | gold | math, bitmask, greedy | 이진수에서 1의 개수가 같은 가장 가까운 작은 수와 큰 수를 비트 패턴 재배치로 찾는다. |
+| [1214 히스토그램](platinum/1214_Histogram.py) | platinum | stack, monotone_stack | 현재 막대가 스택 top보다 낮아지는 순간 top 막대의 최대 직사각형 넓이를 계산한다. |
 
 ## 오늘 푼 문제
+
+### 1214 히스토그램
+
+- 핵심 관찰: 어떤 막대를 높이로 삼으면, 그 막대보다 낮은 막대가 나오기 전까지 좌우로 확장할 수 있다.
+- 풀이 방향: 스택에 높이가 오름차순이 되도록 인덱스를 저장한다.
+- 넓이 계산 시점: 현재 막대가 스택 top보다 낮아지면, top 막대의 오른쪽 경계가 현재 위치 바로 전으로 확정된다.
+- 너비 계산:
+  - 스택이 남아 있으면 `i - stack[-1] - 1`
+  - 스택이 비면 `i`
+- 복잡도: 각 막대는 한 번 push되고 한 번 pop되므로 시간 `O(N)`, 스택에 최대 N개가 쌓이므로 공간 `O(N)`.
 
 ### 1459 숫자고르기
 
