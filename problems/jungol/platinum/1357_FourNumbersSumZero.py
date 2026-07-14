@@ -1,5 +1,5 @@
 # JUNGOL 1357 합이 0이 되는 4개의 숫자들
-# 난이도: gold
+# 난이도: platinum
 # 분류: meet_in_the_middle, hash, counter
 # 핵심:
 #   A + B + C + D = 0을 (A + B) = -(C + D)로 나누어 생각한다.

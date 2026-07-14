@@ -18,10 +18,10 @@ JUNGOL 문제 풀이를 정리하는 폴더입니다.
 ```text
 silver/1997_TigerEatingRiceCakes.py
 gold/1183_CoinVendingMachine.py
-gold/1357_FourNumbersSumZero.py
 gold/1459_NumberSelection.py
 gold/2468_Password.py
 gold/3337_ShoppingMall.py
+platinum/1357_FourNumbersSumZero.py
 platinum/1214_Histogram.py
 ```
 
@@ -85,7 +85,7 @@ monotone_stack
 | --- | --- | --- | --- |
 | [1997 떡 먹는 호랑이](silver/1997_TigerEatingRiceCakes.py) | silver | dp, brute_force, fibonacci | D일째 떡 개수를 `x*A + y*B`로 표현하고, A를 대입해 B를 찾는다 |
 | [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다 |
-| [1357 합이 0이 되는 4개의 숫자들](gold/1357_FourNumbersSumZero.py) | gold | meet_in_the_middle, hash, counter | `A+B = -(C+D)`로 나누고, `A+B` 합의 빈도수를 Counter에 저장해 센다 |
+| [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) | platinum | meet_in_the_middle, hash, counter | `A+B = -(C+D)`로 나누고, `A+B` 합의 빈도수를 Counter에 저장해 센다 |
 | [1459 숫자고르기](gold/1459_NumberSelection.py) | gold | dfs, graph, cycle | `i -> numbers[i]` 형태의 함수형 그래프로 보고, 시작점으로 다시 돌아오는 숫자를 고른다 |
 | [2468 비밀번호](gold/2468_Password.py) | gold | math, bitmask, greedy | 이진수에서 1의 개수가 같은 가장 가까운 작은 수와 큰 수를 비트 패턴 재배치로 찾는다 |
 | [3337 쇼핑몰](gold/3337_ShoppingMall.py) | gold | priority_queue, heap, sorting | 계산대 배정은 heap으로 처리하고, 퇴장 순서는 종료 시간과 계산대 번호로 정렬한다 |

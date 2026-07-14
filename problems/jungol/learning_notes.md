@@ -12,10 +12,10 @@
 | 2 | [정렬 기준에서 일부만 내림차순 처리](#note-02-sort-reverse-part) | [3337 쇼핑몰](gold/3337_ShoppingMall.py) |
 | 3 | [enumerate(arr, start=1)](#note-03-enumerate-start) | [3337 쇼핑몰](gold/3337_ShoppingMall.py) |
 | 4 | [`_`로 사용하지 않는 값 받기](#note-04-unused-underscore) | [3337 쇼핑몰](gold/3337_ShoppingMall.py) |
-| 5 | [meet in the middle](#note-05-meet-in-the-middle) | [1357 합이 0이 되는 4개의 숫자들](gold/1357_FourNumbersSumZero.py) |
-| 6 | [Counter와 defaultdict 차이](#note-06-counter-defaultdict) | [1357 합이 0이 되는 4개의 숫자들](gold/1357_FourNumbersSumZero.py) |
-| 7 | [bisect와 이분 탐색](#note-07-bisect-binary-search) | [1357 합이 0이 되는 4개의 숫자들](gold/1357_FourNumbersSumZero.py) |
-| 8 | [Python 시간/메모리 판단](#note-08-python-limits) | [1357 합이 0이 되는 4개의 숫자들](gold/1357_FourNumbersSumZero.py) |
+| 5 | [meet in the middle](#note-05-meet-in-the-middle) | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) |
+| 6 | [Counter와 defaultdict 차이](#note-06-counter-defaultdict) | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) |
+| 7 | [bisect와 이분 탐색](#note-07-bisect-binary-search) | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) |
+| 8 | [Python 시간/메모리 판단](#note-08-python-limits) | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) |
 
 ### 문제별 메모
 
@@ -264,7 +264,7 @@ defaultdict는 조회 방식에 따라 메모리 사용량이 크게 달라질 �
 
 ### 1357 합이 0이 되는 4개의 숫자들
 
-문제 파일: [1357_FourNumbersSumZero.py](gold/1357_FourNumbersSumZero.py)
+문제 파일: [1357_FourNumbersSumZero.py](platinum/1357_FourNumbersSumZero.py)
 
 배운 내용:
 
