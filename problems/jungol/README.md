@@ -23,6 +23,7 @@ gold/2468_Password.py
 gold/3337_ShoppingMall.py
 platinum/1357_FourNumbersSumZero.py
 platinum/1214_Histogram.py
+platinum/2587_Running.py
 ```
 
 ## 템플릿
@@ -58,6 +59,9 @@ sorting
 binary_search
 two_pointer
 meet_in_the_middle
+coordinate_compression
+fenwick_tree
+segment_tree
 hash
 counter
 greedy
@@ -90,8 +94,17 @@ monotone_stack
 | [2468 비밀번호](gold/2468_Password.py) | gold | math, bitmask, greedy | 이진수에서 1의 개수가 같은 가장 가까운 작은 수와 큰 수를 비트 패턴 재배치로 찾는다 |
 | [3337 쇼핑몰](gold/3337_ShoppingMall.py) | gold | priority_queue, heap, sorting | 계산대 배정은 heap으로 처리하고, 퇴장 순서는 종료 시간과 계산대 번호로 정렬한다 |
 | [1214 히스토그램](platinum/1214_Histogram.py) | platinum | stack, monotone_stack | 현재 막대가 stack top보다 낮아지는 순간 top 막대의 최대 직사각형 넓이를 계산한다 |
+| [2587 달리기](platinum/2587_Running.py) | platinum | coordinate_compression, fenwick_tree | 앞선 선수 중 현재 선수보다 실력이 좋은 선수 수를 Fenwick Tree로 구한다 |
 
 ## 오늘 푼 문제
+
+### 2587 달리기
+
+- 핵심 관찰: 현재 선수의 최고 등수는 `앞에 있는 선수 중 현재 선수보다 실력이 좋은 선수 수 + 1`이다.
+- 접근 방향: 실력 값을 좌표 압축한 뒤, Fenwick Tree에 지금까지 등장한 실력 개수를 저장한다.
+- 현재 선수의 압축 실력이 `rank`라면 나보다 실력이 좋은 선수는 `rank + 1 ~ max_rank` 구간에 있다.
+- 계산식: `better_count = query(max_rank) - query(rank)`
+- 복잡도: 좌표 압축과 각 선수의 update/query를 포함해 시간 `O(N log N)`, 공간 `O(N)`이다.
 
 ### 1214 히스토그램
 
@@ -142,3 +155,7 @@ monotone_stack
 | Counter와 defaultdict 차이 | [학습 메모](learning_notes.md#note-06-counter-defaultdict) |
 | bisect와 이분 탐색 | [학습 메모](learning_notes.md#note-07-bisect-binary-search) |
 | Python 시간/메모리 판단 | [학습 메모](learning_notes.md#note-08-python-limits) |
+| 좌표 압축 | [학습 메모](learning_notes.md#note-09-coordinate-compression) |
+| Fenwick Tree | [학습 메모](learning_notes.md#note-10-fenwick-tree) |
+| Segment Tree | [학습 메모](learning_notes.md#note-11-segment-tree) |
+| Fenwick Tree와 Segment Tree 차이 | [학습 메모](learning_notes.md#note-12-fenwick-vs-segment) |

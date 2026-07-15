@@ -16,6 +16,10 @@
 | 6 | [Counter와 defaultdict 차이](#note-06-counter-defaultdict) | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) |
 | 7 | [bisect와 이분 탐색](#note-07-bisect-binary-search) | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) |
 | 8 | [Python 시간/메모리 판단](#note-08-python-limits) | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) |
+| 9 | [좌표 압축](#note-09-coordinate-compression) | [2587 달리기](platinum/2587_Running.py) |
+| 10 | [Fenwick Tree](#note-10-fenwick-tree) | [2587 달리기](platinum/2587_Running.py) |
+| 11 | [Segment Tree](#note-11-segment-tree) | [2587 달리기](platinum/2587_Running.py) |
+| 12 | [Fenwick Tree와 Segment Tree 차이](#note-12-fenwick-vs-segment) | [2587 달리기](platinum/2587_Running.py) |
 
 ### 문제별 메모
 
@@ -23,6 +27,7 @@
 | --- | --- |
 | [3337 쇼핑몰](#problem-3337-shopping-mall) | heapq 튜플 비교, 정렬 기준, enumerate, `_` |
 | [1357 합이 0이 되는 4개의 숫자들](#problem-1357-four-numbers-sum-zero) | meet in the middle, Counter, defaultdict, bisect |
+| [2587 달리기](#problem-2587-running) | 좌표 압축, Fenwick Tree, Segment Tree와의 차이 |
 
 ## 주제별 메모
 
@@ -121,57 +126,22 @@ counter_count[10] += 1
 default_count[10] += 1
 ```
 
-하지만 **없는 key를 조회할 때** 차이가 큽니다.
-
-`Counter`는 없는 key를 조회해도 key를 새로 만들지 않습니다.
+하지만 없는 key를 조회할 때 차이가 큽니다.
 
 ```python
-from collections import Counter
+from collections import Counter, defaultdict
 
-count = Counter()
+c = Counter()
+d = defaultdict(int)
 
-print(count[100])  # 0
-print(count)       # Counter()
+print(c[100])  # 0, key 추가 안 됨
+print(d[100])  # 0, key 추가됨
 ```
 
-`defaultdict(int)`는 없는 key를 `[]`로 조회하면 key를 새로 만듭니다.
+`defaultdict(int)`를 쓰면서 없는 key를 만들고 싶지 않다면 `.get()`을 씁니다.
 
 ```python
-from collections import defaultdict
-
-count = defaultdict(int)
-
-print(count[100])  # 0
-print(count)       # defaultdict(<class 'int'>, {100: 0})
-```
-
-1357에서 아래처럼 쓰면 문제가 됩니다.
-
-```python
-answer += sum_ab[target]
-```
-
-`target`이 `sum_ab`에 없을 때, `defaultdict(int)`는 `target: 0`을 새로 추가합니다.  
-`C+D`를 탐색하는 동안 없는 target이 많이 나오면 key가 계속 늘어나서 메모리 초과가 날 수 있습니다.
-
-`defaultdict(int)`를 꼭 쓰고 싶다면 `.get()`을 써야 합니다.
-
-```python
-answer += sum_ab.get(target, 0)
-```
-
-`.get()`은 없는 key를 조회해도 key를 새로 만들지 않습니다.
-
-1357에서는 `Counter`가 더 안전합니다.
-
-```python
-sum_ab = Counter()
-
-for a in A:
-    for b in B:
-        sum_ab[a + b] += 1
-
-answer += sum_ab[target]
+answer += d.get(target, 0)
 ```
 
 ## note-07-bisect-binary-search
@@ -199,49 +169,166 @@ bisect_right(arr, x): x보다 큰 값이 처음 나오는 위치
 right - left: x의 개수
 ```
 
-왜 빠른가:
-
-```text
-일반 탐색: 앞에서부터 하나씩 확인하므로 O(N)
-bisect: 범위를 절반씩 줄이며 찾으므로 O(log N)
-```
-
-1357의 bisect 대안:
-
-```python
-cd_sums.sort()
-
-for a in A:
-    for b in B:
-        target = -(a + b)
-        answer += bisect_right(cd_sums, target) - bisect_left(cd_sums, target)
-```
-
-하지만 `N=4000`이면 `A+B` 경우가 16,000,000개라 `bisect_left/right` 호출이 너무 많아질 수 있습니다.  
-그래서 이 문제는 평균 `O(1)` 해시 조회를 사용하는 Counter 풀이가 더 빠릅니다.
+일반 탐색은 `O(N)`이지만, 이분 탐색은 범위를 절반씩 줄이므로 `O(log N)`입니다.
 
 ## note-08-python-limits
 
 ### Python 시간/메모리 판단
 
-1357 문제는 `N=4000`이므로 `N^2 = 16,000,000`입니다.
+큰 입력에서는 알고리즘의 시간복잡도뿐 아니라 Python 자료구조의 메모리 사용량도 봐야 합니다.
 
-풀이 선택:
+1357에서 비교한 방식:
 
 | 방식 | 특징 |
 | --- | --- |
-| Counter/hash | 평균 `O(1)` 조회라 빠르지만, 서로 다른 합이 많으면 메모리를 많이 쓴다 |
+| Counter/hash | 평균 `O(1)` 조회라 빠르지만 서로 다른 합이 많으면 메모리를 많이 쓴다 |
 | defaultdict(int) + `[]` 조회 | 없는 key를 새로 만들어 메모리 초과가 날 수 있다 |
-| defaultdict(int) + `.get()` 조회 | 없는 key를 만들지 않아 Counter와 비슷하게 사용할 수 있다 |
-| 리스트 + bisect | 메모리는 예측하기 쉽지만, `bisect` 호출이 많으면 시간 초과가 날 수 있다 |
+| defaultdict(int) + `.get()` 조회 | 없는 key를 만들지 않는다 |
+| 리스트 + bisect | 메모리는 예측하기 쉽지만 호출이 많으면 시간 초과가 날 수 있다 |
 
-정리:
+## note-09-coordinate-compression
+
+### 좌표 압축
+
+좌표 압축은 값의 실제 크기는 중요하지 않고, 값들의 순서만 중요할 때 큰 값을 작은 번호로 바꾸는 기법입니다.
+
+예시:
+
+```python
+abilities = [100, 20, 50, 20]
+```
+
+중복 제거 후 정렬:
+
+```python
+sorted_values = [20, 50, 100]
+```
+
+작은 값부터 번호를 붙입니다.
 
 ```text
-Counter가 빠른 이유는 Counter 자체의 마법이라기보다 해시 조회가 평균 O(1)이기 때문이다.
-sys.stdin.buffer.read()는 입력을 빠르게 해주는 보조 최적화이다.
-defaultdict는 조회 방식에 따라 메모리 사용량이 크게 달라질 수 있다.
+20  -> 1
+50  -> 2
+100 -> 3
 ```
+
+코드:
+
+```python
+sorted_values = sorted(set(abilities))
+compressed = {
+    value: index
+    for index, value in enumerate(sorted_values, start=1)
+}
+```
+
+2587 달리기에서는 실력 값이 클 수 있으므로, Fenwick Tree의 인덱스로 쓰기 위해 좌표 압축을 합니다.
+
+## note-10-fenwick-tree
+
+### Fenwick Tree
+
+Fenwick Tree는 특정 위치에 값을 더하고, `1번부터 i번까지의 누적합`을 빠르게 구하는 자료구조입니다.
+
+주요 연산:
+
+```text
+update(index, value): index 위치에 value 더하기
+query(index): 1부터 index까지의 합 구하기
+```
+
+기본 코드:
+
+```python
+tree = [0] * (size + 1)
+
+def update(index, value):
+    while index <= size:
+        tree[index] += value
+        index += index & -index
+
+def query(index):
+    total = 0
+
+    while index > 0:
+        total += tree[index]
+        index -= index & -index
+
+    return total
+```
+
+`index & -index`는 Fenwick Tree에서 다음으로 이동할 구간 크기를 구하는 값입니다.
+
+2587에서 쓰는 방식:
+
+```python
+total_runner_count = query(size)
+not_better_count = query(rank)
+better_count = total_runner_count - not_better_count
+```
+
+의미:
+
+```text
+query(size): 앞에 나온 전체 선수 수
+query(rank): 앞에 나온 선수 중 현재 선수보다 실력이 낮거나 같은 선수 수
+차이: 앞에 나온 선수 중 현재 선수보다 실력이 좋은 선수 수
+```
+
+## note-11-segment-tree
+
+### Segment Tree
+
+Segment Tree는 배열의 구간 정보를 트리로 저장해서 구간 질의와 값 갱신을 빠르게 처리하는 자료구조입니다.
+
+할 수 있는 일:
+
+```text
+구간 합
+구간 최솟값
+구간 최댓값
+구간 gcd
+구간 xor
+```
+
+기본 성능:
+
+```text
+값 갱신: O(log N)
+구간 질의: O(log N)
+공간: O(N)
+```
+
+Fenwick Tree보다 구현은 길지만, 더 다양한 구간 질의를 처리할 수 있습니다.
+
+예를 들어 구간 최솟값이나 최댓값을 자주 물어보는 문제라면 Fenwick Tree보다 Segment Tree가 더 적합합니다.
+
+## note-12-fenwick-vs-segment
+
+### Fenwick Tree와 Segment Tree 차이
+
+| 비교 | Fenwick Tree | Segment Tree |
+| --- | --- | --- |
+| 주요 목적 | prefix sum, 빈도수 누적 | 다양한 구간 질의 |
+| 구간 합 | 가능 | 가능 |
+| 구간 최솟값/최댓값 | 일반적으로 부적합 | 적합 |
+| 구현 난이도 | 비교적 짧고 쉬움 | 더 길고 복잡함 |
+| 메모리 | 작음 | 보통 더 큼 |
+| 확장성 | 제한적 | Lazy Propagation 등으로 확장 가능 |
+
+2587에서 Fenwick Tree를 쓴 이유:
+
+```text
+필요한 연산이 "특정 실력 등장 + prefix sum"뿐이기 때문이다.
+```
+
+현재 선수보다 실력이 좋은 앞선 선수 수는 이렇게 구합니다.
+
+```python
+better_count = query(max_rank) - query(rank)
+```
+
+즉, 복잡한 구간 최솟값/최댓값이 필요하지 않으므로 Segment Tree보다 Fenwick Tree가 간단하고 충분합니다.
 
 ## 문제별 메모
 
@@ -274,3 +361,18 @@ defaultdict는 조회 방식에 따라 메모리 사용량이 크게 달라질 �
 | [Counter와 defaultdict 차이](#note-06-counter-defaultdict) | `defaultdict`가 없는 key를 추가해 메모리 초과를 만들 수 있음을 확인 |
 | [bisect와 이분 탐색](#note-07-bisect-binary-search) | 정렬 리스트 기반 대안 풀이와 시간 차이를 이해하기 위해 정리 |
 | [Python 시간/메모리 판단](#note-08-python-limits) | 해시, 입력 최적화, 자료구조 선택의 차이를 비교하기 위해 정리 |
+
+## problem-2587-running
+
+### 2587 달리기
+
+문제 파일: [2587_Running.py](platinum/2587_Running.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [좌표 압축](#note-09-coordinate-compression) | 큰 실력 값을 Fenwick Tree 인덱스로 쓰기 위해 작은 번호로 바꿈 |
+| [Fenwick Tree](#note-10-fenwick-tree) | 앞선 선수들의 실력 개수를 저장하고 prefix sum으로 등수를 계산 |
+| [Segment Tree](#note-11-segment-tree) | 같은 문제를 풀 수 있는 더 범용적인 구간 자료구조로 비교 |
+| [Fenwick Tree와 Segment Tree 차이](#note-12-fenwick-vs-segment) | 2587에서는 prefix sum만 필요하므로 Fenwick Tree가 더 간단함 |
