@@ -24,6 +24,7 @@ gold/3337_ShoppingMall.py
 platinum/1357_FourNumbersSumZero.py
 platinum/1214_Histogram.py
 platinum/2587_Running.py
+silver/1681_HamiltonianCycle.py
 ```
 
 ## 템플릿
@@ -72,8 +73,10 @@ queue
 deque
 bfs
 dfs
+backtracking
 dp
 graph
+tsp
 string
 geometry
 brute_force
@@ -95,8 +98,18 @@ monotone_stack
 | [3337 쇼핑몰](gold/3337_ShoppingMall.py) | gold | priority_queue, heap, sorting | 계산대 배정은 heap으로 처리하고, 퇴장 순서는 종료 시간과 계산대 번호로 정렬한다 |
 | [1214 히스토그램](platinum/1214_Histogram.py) | platinum | stack, monotone_stack | 현재 막대가 stack top보다 낮아지는 순간 top 막대의 최대 직사각형 넓이를 계산한다 |
 | [2587 달리기](platinum/2587_Running.py) | platinum | coordinate_compression, fenwick_tree | 앞선 선수 중 현재 선수보다 실력이 좋은 선수 수를 Fenwick Tree로 구한다 |
+| [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) | silver1 | dfs, backtracking, graph, tsp | 1번 정점에서 출발해 모든 정점을 한 번씩 방문하고 다시 1번 정점으로 돌아오는 최소 비용을 찾는다 |
 
 ## 오늘 푼 문제
+
+### 1681 해밀턴 순환회로
+
+- 핵심 관찰: 순환회로는 모든 정점을 정확히 한 번씩 방문한 뒤 다시 시작점으로 돌아오는 경로이다.
+- 접근 방향: 시작점을 1번 정점으로 고정하고 DFS 백트래킹으로 방문 순서를 만든다.
+- DFS 상태: `current`는 현재 정점, `count`는 방문한 정점 수, `total_cost`는 지금까지의 비용이다.
+- 종료 조건: `count == N`이면 모든 정점을 방문한 상태이므로, 현재 정점에서 시작점으로 돌아갈 수 있을 때만 정답을 갱신한다.
+- 가지치기: 이미 `total_cost >= answer`이면 더 탐색해도 최소 비용이 될 수 없으므로 중단한다.
+- 복잡도: 최악의 경우 가능한 방문 순서를 모두 보므로 시간 `O(N!)`, 방문 배열과 재귀 깊이 때문에 공간 `O(N)`이다.
 
 ### 2587 달리기
 
@@ -159,3 +172,6 @@ monotone_stack
 | Fenwick Tree | [학습 메모](learning_notes.md#note-10-fenwick-tree) |
 | Segment Tree | [학습 메모](learning_notes.md#note-11-segment-tree) |
 | Fenwick Tree와 Segment Tree 차이 | [학습 메모](learning_notes.md#note-12-fenwick-vs-segment) |
+| DFS 백트래킹 | [학습 메모](learning_notes.md#note-13-dfs-backtracking) |
+| 해밀턴 순환회로 | [학습 메모](learning_notes.md#note-14-hamiltonian-cycle) |
+| nonlocal | [학습 메모](learning_notes.md#note-15-nonlocal) |

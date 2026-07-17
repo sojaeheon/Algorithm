@@ -20,6 +20,9 @@
 | 10 | [Fenwick Tree](#note-10-fenwick-tree) | [2587 달리기](platinum/2587_Running.py) |
 | 11 | [Segment Tree](#note-11-segment-tree) | [2587 달리기](platinum/2587_Running.py) |
 | 12 | [Fenwick Tree와 Segment Tree 차이](#note-12-fenwick-vs-segment) | [2587 달리기](platinum/2587_Running.py) |
+| 13 | [DFS 백트래킹](#note-13-dfs-backtracking) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
+| 14 | [해밀턴 순환회로](#note-14-hamiltonian-cycle) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
+| 15 | [nonlocal](#note-15-nonlocal) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
 
 ### 문제별 메모
 
@@ -28,6 +31,7 @@
 | [3337 쇼핑몰](#problem-3337-shopping-mall) | heapq 튜플 비교, 정렬 기준, enumerate, `_` |
 | [1357 합이 0이 되는 4개의 숫자들](#problem-1357-four-numbers-sum-zero) | meet in the middle, Counter, defaultdict, bisect |
 | [2587 달리기](#problem-2587-running) | 좌표 압축, Fenwick Tree, Segment Tree와의 차이 |
+| [1681 해밀턴 순환회로](#problem-1681-hamiltonian-cycle) | DFS 백트래킹, 순환회로, `nonlocal` |
 
 ## 주제별 메모
 
@@ -330,6 +334,92 @@ better_count = query(max_rank) - query(rank)
 
 즉, 복잡한 구간 최솟값/최댓값이 필요하지 않으므로 Segment Tree보다 Fenwick Tree가 간단하고 충분합니다.
 
+## note-13-dfs-backtracking
+
+### DFS 백트래킹
+
+DFS 백트래킹은 가능한 선택을 하나씩 해 보면서, 조건에 맞지 않거나 더 볼 필요가 없는 경우 되돌아가는 방식입니다.
+
+1681에서는 방문 순서를 하나씩 만든다고 생각하면 됩니다.
+
+```text
+1번에서 시작
+아직 방문하지 않은 정점으로 이동
+모든 정점을 방문하면 다시 1번으로 돌아갈 수 있는지 확인
+```
+
+백트래킹의 핵심은 방문 처리와 되돌리기입니다.
+
+```python
+visited[next_node] = True
+dfs(next_node, count + 1, total_cost + cost[current][next_node])
+visited[next_node] = False
+```
+
+`visited[next_node] = False`를 하지 않으면 다음 경우의 수에서 그 정점을 다시 사용할 수 없으므로 탐색이 망가집니다.
+
+가지치기도 중요합니다.
+
+```python
+if total_cost >= answer:
+    return
+```
+
+이미 지금 비용이 지금까지 찾은 최소 비용 이상이라면, 뒤에 어떤 경로를 더 붙여도 최소 답이 될 수 없습니다.
+
+## note-14-hamiltonian-cycle
+
+### 해밀턴 순환회로
+
+해밀턴 순환회로는 모든 정점을 정확히 한 번씩 방문한 뒤 시작 정점으로 돌아오는 경로입니다.
+
+1681에서 순환회로라고 판단하는 기준:
+
+```text
+1. 1번 정점에서 시작한다.
+2. 모든 정점을 한 번씩 방문한다.
+3. 마지막 정점에서 다시 1번 정점으로 돌아온다.
+```
+
+그래서 DFS 종료 조건은 단순히 모든 정점을 방문했는지가 아니라, 시작점으로 돌아갈 수 있는지도 같이 봐야 합니다.
+
+```python
+if count == N:
+    if cost[current][0] != 0:
+        answer = min(answer, total_cost + cost[current][0])
+    return
+```
+
+여기서 `cost[current][0] != 0`은 현재 정점에서 시작점으로 돌아가는 길이 있다는 뜻입니다.
+
+## note-15-nonlocal
+
+### nonlocal
+
+`nonlocal`은 안쪽 함수에서 바깥 함수의 지역 변수를 수정할 때 사용합니다.
+
+1681 코드에서는 `solution()` 안에 `answer`가 있고, 그 안쪽 함수인 `dfs()`에서 `answer`를 갱신합니다.
+
+```python
+def solution(N, cost):
+    answer = 10**18
+
+    def dfs(current, count, total_cost):
+        nonlocal answer
+        answer = min(answer, total_cost)
+```
+
+`nonlocal answer`가 없으면 Python은 `dfs()` 안의 `answer`를 새로운 지역 변수로 보려고 해서 오류가 납니다.
+
+`global`과의 차이:
+
+| 키워드 | 의미 |
+| --- | --- |
+| `nonlocal` | 바로 바깥 함수 쪽 변수를 사용 |
+| `global` | 파일 전체 범위의 전역 변수를 사용 |
+
+이 문제처럼 `solution()` 안에서만 쓰는 답 변수는 `global`보다 `nonlocal`이 더 깔끔합니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -376,3 +466,17 @@ better_count = query(max_rank) - query(rank)
 | [Fenwick Tree](#note-10-fenwick-tree) | 앞선 선수들의 실력 개수를 저장하고 prefix sum으로 등수를 계산 |
 | [Segment Tree](#note-11-segment-tree) | 같은 문제를 풀 수 있는 더 범용적인 구간 자료구조로 비교 |
 | [Fenwick Tree와 Segment Tree 차이](#note-12-fenwick-vs-segment) | 2587에서는 prefix sum만 필요하므로 Fenwick Tree가 더 간단함 |
+
+## problem-1681-hamiltonian-cycle
+
+### 1681 해밀턴 순환회로
+
+문제 파일: [1681_HamiltonianCycle.py](silver/1681_HamiltonianCycle.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [DFS 백트래킹](#note-13-dfs-backtracking) | 가능한 방문 순서를 하나씩 만들고, 방문 처리를 되돌리며 모든 경우를 탐색 |
+| [해밀턴 순환회로](#note-14-hamiltonian-cycle) | 모든 정점을 한 번씩 방문한 뒤 시작점으로 돌아와야 한다는 조건을 이해 |
+| [nonlocal](#note-15-nonlocal) | `dfs()` 안에서 `solution()`의 `answer`를 갱신하기 위해 사용 |
