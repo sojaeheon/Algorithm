@@ -22,6 +22,7 @@ gold/1459_NumberSelection.py
 gold/2468_Password.py
 gold/3337_ShoppingMall.py
 platinum/1357_FourNumbersSumZero.py
+platinum/1545_HamiltonianCycle2.py
 platinum/1214_Histogram.py
 platinum/2587_Running.py
 silver/1681_HamiltonianCycle.py
@@ -99,8 +100,19 @@ monotone_stack
 | [1214 히스토그램](platinum/1214_Histogram.py) | platinum | stack, monotone_stack | 현재 막대가 stack top보다 낮아지는 순간 top 막대의 최대 직사각형 넓이를 계산한다 |
 | [2587 달리기](platinum/2587_Running.py) | platinum | coordinate_compression, fenwick_tree | 앞선 선수 중 현재 선수보다 실력이 좋은 선수 수를 Fenwick Tree로 구한다 |
 | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) | silver1 | dfs, backtracking, graph, tsp | 1번 정점에서 출발해 모든 정점을 한 번씩 방문하고 다시 1번 정점으로 돌아오는 최소 비용을 찾는다 |
+| [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) | platinum5 | bitmask, dp, graph, tsp | 방문 상태를 비트마스크로 표현하고 `dp[mask][current]`로 최소 비용을 저장한다 |
 
 ## 오늘 푼 문제
+
+### 1545 해밀턴 순환회로 2
+
+- 핵심 관찰: `N <= 19`라 DFS 백트래킹 `O(N!)`은 어렵고, 비트마스크 DP로 같은 상태를 재사용해야 한다.
+- DP 상태: `dp[mask][current]`는 `mask`에 포함된 장소들을 방문했고 현재 `current`에 있을 때의 최소 비용이다.
+- 시작 상태: `dp[1][0] = 0`이다. `1`은 비트로 `000...001`이므로 0번 장소, 즉 회사만 방문한 상태이다.
+- 방문 확인: `mask & (1 << next_node)`가 0이 아니면 `next_node`는 이미 방문한 장소이다.
+- 상태 전이: `next_mask = mask | (1 << next_node)`로 다음 장소를 방문 목록에 추가한다.
+- 마지막 처리: 모든 장소를 방문한 `full` 상태에서 마지막 장소가 `current`일 때, `cost[current][0]`을 더해 회사로 돌아온다.
+- 복잡도: 시간 `O(N^2 * 2^N)`, 공간 `O(N * 2^N)`이다. Python 제출은 PyPy3가 더 유리하다.
 
 ### 1681 해밀턴 순환회로
 
@@ -175,3 +187,4 @@ monotone_stack
 | DFS 백트래킹 | [학습 메모](learning_notes.md#note-13-dfs-backtracking) |
 | 해밀턴 순환회로 | [학습 메모](learning_notes.md#note-14-hamiltonian-cycle) |
 | nonlocal | [학습 메모](learning_notes.md#note-15-nonlocal) |
+| 비트마스크 DP | [학습 메모](learning_notes.md#note-16-bitmask-dp) |

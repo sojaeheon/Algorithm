@@ -23,6 +23,7 @@
 | 13 | [DFS 백트래킹](#note-13-dfs-backtracking) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
 | 14 | [해밀턴 순환회로](#note-14-hamiltonian-cycle) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
 | 15 | [nonlocal](#note-15-nonlocal) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
+| 16 | [비트마스크 DP](#note-16-bitmask-dp) | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) |
 
 ### 문제별 메모
 
@@ -32,6 +33,7 @@
 | [1357 합이 0이 되는 4개의 숫자들](#problem-1357-four-numbers-sum-zero) | meet in the middle, Counter, defaultdict, bisect |
 | [2587 달리기](#problem-2587-running) | 좌표 압축, Fenwick Tree, Segment Tree와의 차이 |
 | [1681 해밀턴 순환회로](#problem-1681-hamiltonian-cycle) | DFS 백트래킹, 순환회로, `nonlocal` |
+| [1545 해밀턴 순환회로 2](#problem-1545-hamiltonian-cycle-2) | 비트마스크 DP, 방문 상태 표현, TSP |
 
 ## 주제별 메모
 
@@ -420,6 +422,69 @@ def solution(N, cost):
 
 이 문제처럼 `solution()` 안에서만 쓰는 답 변수는 `global`보다 `nonlocal`이 더 깔끔합니다.
 
+## note-16-bitmask-dp
+
+### 비트마스크 DP
+
+비트마스크 DP는 여러 개의 선택 여부를 정수 하나의 비트로 저장하고, 그 상태를 DP 인덱스로 사용하는 방식입니다.
+
+1545에서는 장소 방문 여부를 `mask`로 표현합니다.
+
+```text
+0001 = 0번 장소만 방문
+0011 = 0번, 1번 장소 방문
+0101 = 0번, 2번 장소 방문
+1111 = 모든 장소 방문
+```
+
+DP 상태는 이렇게 잡습니다.
+
+```python
+dp[mask][current]
+```
+
+의미:
+
+```text
+mask에 포함된 장소들을 방문했고,
+현재 current 장소에 있을 때의 최소 비용
+```
+
+방문 여부 확인:
+
+```python
+if mask & (1 << next_node):
+    continue
+```
+
+`1 << next_node`는 `next_node`번 장소만 켜진 비트입니다. `mask`와 AND 했을 때 0이 아니면 이미 방문한 장소입니다.
+
+방문 추가:
+
+```python
+next_mask = mask | (1 << next_node)
+```
+
+`|` 연산은 기존 방문 상태에 `next_node` 방문 표시를 추가합니다.
+
+DP 갱신:
+
+```python
+next_cost = dp[mask][current] + cost[current][next_node]
+
+if next_cost < dp[next_mask][next_node]:
+    dp[next_mask][next_node] = next_cost
+```
+
+뜻:
+
+```text
+현재 상태에서 next_node로 이동했을 때,
+더 싼 비용으로 도착할 수 있으면 최소 비용을 갱신한다.
+```
+
+해밀턴 순환회로 2에서는 DFS 백트래킹이 `O(N!)`이라 어렵고, 비트마스크 DP로 `O(N^2 * 2^N)`까지 줄입니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -480,3 +545,17 @@ def solution(N, cost):
 | [DFS 백트래킹](#note-13-dfs-backtracking) | 가능한 방문 순서를 하나씩 만들고, 방문 처리를 되돌리며 모든 경우를 탐색 |
 | [해밀턴 순환회로](#note-14-hamiltonian-cycle) | 모든 정점을 한 번씩 방문한 뒤 시작점으로 돌아와야 한다는 조건을 이해 |
 | [nonlocal](#note-15-nonlocal) | `dfs()` 안에서 `solution()`의 `answer`를 갱신하기 위해 사용 |
+
+## problem-1545-hamiltonian-cycle-2
+
+### 1545 해밀턴 순환회로 2
+
+문제 파일: [1545_HamiltonianCycle2.py](platinum/1545_HamiltonianCycle2.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [비트마스크 DP](#note-16-bitmask-dp) | `N <= 19`에서 모든 순서를 직접 보는 DFS 대신 방문 상태를 재사용하기 위해 사용 |
+| [해밀턴 순환회로](#note-14-hamiltonian-cycle) | 모든 장소를 한 번씩 방문한 뒤 회사로 돌아와야 한다는 조건을 처리 |
+| Python 제출 환경 | 반복문이 많은 비트마스크 DP라 PyPy3 제출이 더 유리함 |
