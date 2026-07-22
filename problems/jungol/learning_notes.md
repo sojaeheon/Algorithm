@@ -26,6 +26,7 @@
 | 16 | [비트마스크 DP](#note-16-bitmask-dp) | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) |
 | 17 | [단조 스택](#note-17-monotone-stack) | [1809 탑](gold/1809_Tower.py), [1214 히스토그램](platinum/1214_Histogram.py) |
 | 18 | [회의실 배정 그리디](#note-18-meeting-room-greedy) | [1370 회의실 배정](silver/1370_MeetingRoomAssignment.py) |
+| 19 | [매개변수 탐색](#note-19-parametric-search) | [2581 예산](silver/2581_Budget.py) |
 
 ### 문제별 메모
 
@@ -38,6 +39,7 @@
 | [1545 해밀턴 순환회로 2](#problem-1545-hamiltonian-cycle-2) | 비트마스크 DP, 방문 상태 표현, TSP |
 | [1809 탑](#problem-1809-tower) | 단조 스택, 가까운 큰 값 찾기 |
 | [1370 회의실 배정](#problem-1370-meeting-room-assignment) | 종료 시간 기준 그리디, 선택 조건 |
+| [2581 예산](#problem-2581-budget) | 이분 탐색, 매개변수 탐색, 가능/불가능 판단 |
 
 ## 주제별 메모
 
@@ -559,6 +561,54 @@ if start_time >= last_end_time:
 
 1370은 선택한 회의 번호도 출력해야 하므로, 회의 정보를 `(회의 번호, 시작 시간, 종료 시간)`으로 저장합니다.
 
+## note-19-parametric-search
+
+### 매개변수 탐색
+
+매개변수 탐색은 정답 후보 `x`를 정했을 때 가능한지 판단하고, 가능한 값 중 최댓값이나 최솟값을 이분 탐색으로 찾는 방식입니다.
+
+2581 예산에서는 정답 후보가 상한액 `cap`입니다.
+
+```python
+used_budget = 0
+for request in requests:
+    used_budget += min(request, cap)
+```
+
+`cap`이 작으면 총 배정액도 작아서 가능하고, `cap`이 커지면 총 배정액도 커져서 언젠가 불가능해집니다.
+
+```text
+가능 가능 가능 가능 불가능 불가능 불가능
+```
+
+2581은 가능한 `cap` 중 가장 큰 값을 찾아야 합니다.
+
+```python
+if used_budget <= total_budget:
+    answer = cap
+    left = cap + 1
+else:
+    right = cap - 1
+```
+
+의미:
+
+```text
+가능하면 현재 cap을 저장하고 더 큰 값을 탐색한다.
+불가능하면 cap이 너무 큰 것이므로 더 작은 값을 탐색한다.
+```
+
+매개변수 탐색을 의심할 수 있는 표현:
+
+```text
+가능한 최댓값
+필요한 최솟값
+최대값을 최소화
+최소값을 최대화
+상한액
+정해진 조건 안에서 가장 큰 값
+```
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -661,3 +711,17 @@ if start_time >= last_end_time:
 | [회의실 배정 그리디](#note-18-meeting-room-greedy) | 종료 시간이 빠른 회의부터 선택하면 최대 개수를 만들 수 있기 때문 |
 | `(종료 시간, 시작 시간)` 정렬 | greedy 선택 순서를 만들기 위해 사용 |
 | `start_time >= last_end_time` | 종료 시간과 시작 시간이 같은 경우는 겹치지 않는다는 조건 처리 |
+
+## problem-2581-budget
+
+### 2581 예산
+
+문제 파일: [2581_Budget.py](silver/2581_Budget.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [매개변수 탐색](#note-19-parametric-search) | 상한액 `cap`이 가능한지 판단하면서 가능한 최댓값을 찾기 위해 사용 |
+| `sum(min(request, cap))` | 상한액을 적용했을 때 실제 배정되는 총 예산을 계산 |
+| `used_budget <= total_budget` | 현재 상한액이 가능한지 판단하는 기준 |

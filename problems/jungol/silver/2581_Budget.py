@@ -36,8 +36,22 @@ import sys
 
 
 def solution(N, requests, total_budget):
-    # TODO: 이분 탐색으로 가능한 최대 상한액을 구한다.
+    left = 0
+    right = max(requests)
     answer = 0
+
+    while left <= right:
+        cap = (left + right) // 2
+
+        used_budget = 0
+        for request in requests:
+            used_budget += min(request, cap)
+
+        if used_budget <= total_budget:
+            answer = cap
+            left = cap + 1
+        else:
+            right = cap - 1
 
     return answer
 
