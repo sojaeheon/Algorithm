@@ -25,6 +25,7 @@
 | 15 | [nonlocal](#note-15-nonlocal) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
 | 16 | [비트마스크 DP](#note-16-bitmask-dp) | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) |
 | 17 | [단조 스택](#note-17-monotone-stack) | [1809 탑](gold/1809_Tower.py), [1214 히스토그램](platinum/1214_Histogram.py) |
+| 18 | [회의실 배정 그리디](#note-18-meeting-room-greedy) | [1370 회의실 배정](silver/1370_MeetingRoomAssignment.py) |
 
 ### 문제별 메모
 
@@ -36,6 +37,7 @@
 | [1681 해밀턴 순환회로](#problem-1681-hamiltonian-cycle) | DFS 백트래킹, 순환회로, `nonlocal` |
 | [1545 해밀턴 순환회로 2](#problem-1545-hamiltonian-cycle-2) | 비트마스크 DP, 방문 상태 표현, TSP |
 | [1809 탑](#problem-1809-tower) | 단조 스택, 가까운 큰 값 찾기 |
+| [1370 회의실 배정](#problem-1370-meeting-room-assignment) | 종료 시간 기준 그리디, 선택 조건 |
 
 ## 주제별 메모
 
@@ -524,6 +526,39 @@ stack.append((tower_number, height))
 
 각 탑은 stack에 한 번 들어가고 최대 한 번 나오므로 전체 시간복잡도는 `O(N)`입니다.
 
+## note-18-meeting-room-greedy
+
+### 회의실 배정 그리디
+
+회의실 배정 문제는 한 회의실에서 겹치지 않게 최대한 많은 회의를 고르는 문제입니다.
+
+가장 중요한 선택 기준은 종료 시간입니다.
+
+```python
+meetings.sort(key=lambda x: (x[2], x[1]))
+```
+
+의미:
+
+```text
+1. 종료 시간이 빠른 회의 먼저
+2. 종료 시간이 같으면 시작 시간이 빠른 회의 먼저
+```
+
+종료 시간이 빠른 회의를 먼저 선택하면 뒤에 남는 시간이 많아져서 더 많은 회의를 넣을 가능성이 커집니다.
+
+선택 조건:
+
+```python
+if start_time >= last_end_time:
+    selected.append(meeting_number)
+    last_end_time = end_time
+```
+
+`>=`를 쓰는 이유는 회의가 끝나는 시간과 다음 회의가 시작하는 시간이 같으면 겹치지 않기 때문입니다.
+
+1370은 선택한 회의 번호도 출력해야 하므로, 회의 정보를 `(회의 번호, 시작 시간, 종료 시간)`으로 저장합니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -612,3 +647,17 @@ stack.append((tower_number, height))
 | [단조 스택](#note-17-monotone-stack) | 현재 탑보다 낮은 왼쪽 탑을 제거하고 가까운 수신 탑을 빠르게 찾기 위해 사용 |
 | stack에 인덱스와 높이 함께 저장 | 출력에는 탑 번호가 필요하고, 비교에는 높이가 필요하기 때문 |
 | `while stack and stack[-1][1] < height` | 현재 탑보다 낮은 탑은 현재 탑의 신호를 받을 수 없으므로 제거 |
+
+## problem-1370-meeting-room-assignment
+
+### 1370 회의실 배정
+
+문제 파일: [1370_MeetingRoomAssignment.py](silver/1370_MeetingRoomAssignment.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [회의실 배정 그리디](#note-18-meeting-room-greedy) | 종료 시간이 빠른 회의부터 선택하면 최대 개수를 만들 수 있기 때문 |
+| `(종료 시간, 시작 시간)` 정렬 | greedy 선택 순서를 만들기 위해 사용 |
+| `start_time >= last_end_time` | 종료 시간과 시작 시간이 같은 경우는 겹치지 않는다는 조건 처리 |
