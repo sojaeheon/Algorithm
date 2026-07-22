@@ -18,6 +18,7 @@ JUNGOL 문제 풀이를 정리하는 폴더입니다.
 ```text
 silver/1997_TigerEatingRiceCakes.py
 gold/1183_CoinVendingMachine.py
+gold/1809_Tower.py
 gold/1459_NumberSelection.py
 gold/2468_Password.py
 gold/3337_ShoppingMall.py
@@ -93,6 +94,7 @@ monotone_stack
 | --- | --- | --- | --- |
 | [1997 떡 먹는 호랑이](silver/1997_TigerEatingRiceCakes.py) | silver | dp, brute_force, fibonacci | D일째 떡 개수를 `x*A + y*B`로 표현하고, A를 대입해 B를 찾는다 |
 | [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다 |
+| [1809 탑](gold/1809_Tower.py) | gold | stack, monotone_stack | 현재 탑보다 낮은 왼쪽 탑을 제거하고, 남은 stack top을 수신 탑으로 사용한다 |
 | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) | platinum | meet_in_the_middle, hash, counter | `A+B = -(C+D)`로 나누고, `A+B` 합의 빈도수를 Counter에 저장해 센다 |
 | [1459 숫자고르기](gold/1459_NumberSelection.py) | gold | dfs, graph, cycle | `i -> numbers[i]` 형태의 함수형 그래프로 보고, 시작점으로 다시 돌아오는 숫자를 고른다 |
 | [2468 비밀번호](gold/2468_Password.py) | gold | math, bitmask, greedy | 이진수에서 1의 개수가 같은 가장 가까운 작은 수와 큰 수를 비트 패턴 재배치로 찾는다 |
@@ -103,6 +105,15 @@ monotone_stack
 | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) | platinum5 | bitmask, dp, graph, tsp | 방문 상태를 비트마스크로 표현하고 `dp[mask][current]`로 최소 비용을 저장한다 |
 
 ## 오늘 푼 문제
+
+### 1809 탑
+
+- 핵심 관찰: 현재 탑의 신호를 받을 수 있는 탑은 왼쪽에 있는 탑 중 현재 탑보다 높거나 같은 가장 가까운 탑이다.
+- 접근 방향: stack에 오른쪽 탑의 신호를 받을 가능성이 있는 탑만 남긴다.
+- 제거 조건: stack top의 높이가 현재 탑보다 낮으면 현재 탑에 가려지므로 pop한다.
+- 정답 계산: 낮은 탑을 제거한 뒤 stack이 남아 있으면 `stack[-1][0]`이 수신 탑 번호이고, 비어 있으면 `0`이다.
+- 현재 탑 저장: 이후 오른쪽 탑들의 후보가 될 수 있으므로 `(tower_number, height)`를 stack에 넣는다.
+- 복잡도: 각 탑은 한 번 push되고 최대 한 번 pop되므로 시간 `O(N)`, 공간 `O(N)`이다.
 
 ### 1545 해밀턴 순환회로 2
 
@@ -188,3 +199,4 @@ monotone_stack
 | 해밀턴 순환회로 | [학습 메모](learning_notes.md#note-14-hamiltonian-cycle) |
 | nonlocal | [학습 메모](learning_notes.md#note-15-nonlocal) |
 | 비트마스크 DP | [학습 메모](learning_notes.md#note-16-bitmask-dp) |
+| 단조 스택 | [학습 메모](learning_notes.md#note-17-monotone-stack) |

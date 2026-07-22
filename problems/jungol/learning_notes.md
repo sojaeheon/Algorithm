@@ -24,6 +24,7 @@
 | 14 | [해밀턴 순환회로](#note-14-hamiltonian-cycle) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
 | 15 | [nonlocal](#note-15-nonlocal) | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) |
 | 16 | [비트마스크 DP](#note-16-bitmask-dp) | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) |
+| 17 | [단조 스택](#note-17-monotone-stack) | [1809 탑](gold/1809_Tower.py), [1214 히스토그램](platinum/1214_Histogram.py) |
 
 ### 문제별 메모
 
@@ -34,6 +35,7 @@
 | [2587 달리기](#problem-2587-running) | 좌표 압축, Fenwick Tree, Segment Tree와의 차이 |
 | [1681 해밀턴 순환회로](#problem-1681-hamiltonian-cycle) | DFS 백트래킹, 순환회로, `nonlocal` |
 | [1545 해밀턴 순환회로 2](#problem-1545-hamiltonian-cycle-2) | 비트마스크 DP, 방문 상태 표현, TSP |
+| [1809 탑](#problem-1809-tower) | 단조 스택, 가까운 큰 값 찾기 |
 
 ## 주제별 메모
 
@@ -485,6 +487,43 @@ if next_cost < dp[next_mask][next_node]:
 
 해밀턴 순환회로 2에서는 DFS 백트래킹이 `O(N!)`이라 어렵고, 비트마스크 DP로 `O(N^2 * 2^N)`까지 줄입니다.
 
+## note-17-monotone-stack
+
+### 단조 스택
+
+단조 스택은 stack 안의 값이 일정한 방향으로 정렬된 상태를 유지하는 기법입니다.
+
+1809 탑에서는 stack에 높이가 큰 탑들이 남도록 관리합니다.
+
+```python
+while stack and stack[-1][1] < height:
+    stack.pop()
+```
+
+의미:
+
+```text
+stack top 탑이 현재 탑보다 낮으면
+현재 탑의 신호를 받을 수 없으므로 제거한다.
+```
+
+낮은 탑을 제거한 뒤 stack top이 남아 있다면, 그 탑이 현재 탑의 신호를 받을 수 있는 가장 가까운 탑입니다.
+
+```python
+if stack:
+    answer.append(stack[-1][0])
+else:
+    answer.append(0)
+```
+
+현재 탑도 이후 오른쪽 탑들의 후보가 될 수 있으므로 stack에 넣습니다.
+
+```python
+stack.append((tower_number, height))
+```
+
+각 탑은 stack에 한 번 들어가고 최대 한 번 나오므로 전체 시간복잡도는 `O(N)`입니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -559,3 +598,17 @@ if next_cost < dp[next_mask][next_node]:
 | [비트마스크 DP](#note-16-bitmask-dp) | `N <= 19`에서 모든 순서를 직접 보는 DFS 대신 방문 상태를 재사용하기 위해 사용 |
 | [해밀턴 순환회로](#note-14-hamiltonian-cycle) | 모든 장소를 한 번씩 방문한 뒤 회사로 돌아와야 한다는 조건을 처리 |
 | Python 제출 환경 | 반복문이 많은 비트마스크 DP라 PyPy3 제출이 더 유리함 |
+
+## problem-1809-tower
+
+### 1809 탑
+
+문제 파일: [1809_Tower.py](gold/1809_Tower.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [단조 스택](#note-17-monotone-stack) | 현재 탑보다 낮은 왼쪽 탑을 제거하고 가까운 수신 탑을 빠르게 찾기 위해 사용 |
+| stack에 인덱스와 높이 함께 저장 | 출력에는 탑 번호가 필요하고, 비교에는 높이가 필요하기 때문 |
+| `while stack and stack[-1][1] < height` | 현재 탑보다 낮은 탑은 현재 탑의 신호를 받을 수 없으므로 제거 |
