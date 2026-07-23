@@ -28,6 +28,7 @@
 | 18 | [회의실 배정 그리디](#note-18-meeting-room-greedy) | [1370 회의실 배정](silver/1370_MeetingRoomAssignment.py) |
 | 19 | [매개변수 탐색](#note-19-parametric-search) | [2581 예산](silver/2581_Budget.py) |
 | 20 | [투 포인터](#note-20-two-pointer) | [2300 용액](gold/2300_Solution.py) |
+| 21 | [누적합과 해시](#note-21-prefix-sum-hash) | [3706 합이 0이 되는 연속구간 세기](silver/3706_CountZeroSumSubarrays.py) |
 
 ### 문제별 메모
 
@@ -42,6 +43,7 @@
 | [1370 회의실 배정](#problem-1370-meeting-room-assignment) | 종료 시간 기준 그리디, 선택 조건 |
 | [2581 예산](#problem-2581-budget) | 이분 탐색, 매개변수 탐색, 가능/불가능 판단 |
 | [2300 용액](#problem-2300-solution) | 정렬, 투 포인터, 합의 부호에 따른 이동 |
+| [3706 합이 0이 되는 연속구간 세기](#problem-3706-count-zero-sum-subarrays) | 누적합, Counter, 같은 누적합 쌍 |
 
 ## 주제별 메모
 
@@ -656,6 +658,47 @@ else:
 
 정렬 후 한 번만 훑으므로 투 포인터 부분은 `O(N)`입니다.
 
+## note-21-prefix-sum-hash
+
+### 누적합과 해시
+
+연속 구간 합은 누적합의 차이로 표현할 수 있습니다.
+
+```text
+구간 합 i+1 ~ j = prefix[j] - prefix[i]
+```
+
+구간 합이 0이 되려면 두 누적합이 같아야 합니다.
+
+```text
+prefix[j] - prefix[i] = 0
+prefix[j] = prefix[i]
+```
+
+그래서 현재 누적합이 이전에 몇 번 나왔는지 세면, 현재 위치에서 끝나는 합 0 구간의 개수를 알 수 있습니다.
+
+```python
+answer += prefix_count[prefix_sum]
+prefix_count[prefix_sum] += 1
+```
+
+초기값도 중요합니다.
+
+```python
+prefix_count[0] = 1
+```
+
+시작 전 누적합 0을 한 번 기록해두면, 처음부터 현재 위치까지의 합이 0인 구간도 셀 수 있습니다.
+
+예시:
+
+```text
+numbers = [1, -1, 2, -2]
+누적합: 시작 전 0, 1, 0, 2, 0
+```
+
+마지막 누적합 0을 볼 때 이전에 0이 두 번 있었으므로, 현재 위치에서 끝나는 합 0 구간이 두 개 생깁니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -786,3 +829,17 @@ else:
 | [투 포인터](#note-20-two-pointer) | 정렬된 배열의 양끝에서 합이 0에 가까운 두 값을 빠르게 찾기 위해 사용 |
 | 합이 음수일 때 `left += 1` | 합을 키워 0에 가깝게 만들기 위해 사용 |
 | 합이 양수일 때 `right -= 1` | 합을 줄여 0에 가깝게 만들기 위해 사용 |
+
+## problem-3706-count-zero-sum-subarrays
+
+### 3706 합이 0이 되는 연속구간 세기
+
+문제 파일: [3706_CountZeroSumSubarrays.py](silver/3706_CountZeroSumSubarrays.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [누적합과 해시](#note-21-prefix-sum-hash) | 같은 누적합이 나온 두 지점 사이의 구간 합이 0이기 때문 |
+| `prefix_count[0] = 1` | 시작 지점부터 합이 0인 구간을 세기 위해 필요 |
+| `answer += prefix_count[prefix_sum]` | 현재 누적합과 같은 이전 누적합 개수만큼 합 0 구간이 생김 |

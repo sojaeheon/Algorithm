@@ -22,6 +22,7 @@ silver/2581_Budget.py
 gold/1183_CoinVendingMachine.py
 gold/1809_Tower.py
 gold/2300_Solution.py
+silver/3706_CountZeroSumSubarrays.py
 gold/1459_NumberSelection.py
 gold/2468_Password.py
 gold/3337_ShoppingMall.py
@@ -101,6 +102,7 @@ monotone_stack
 | [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다 |
 | [1809 탑](gold/1809_Tower.py) | gold | stack, monotone_stack | 현재 탑보다 낮은 왼쪽 탑을 제거하고, 남은 stack top을 수신 탑으로 사용한다 |
 | [2300 용액](gold/2300_Solution.py) | gold | two_pointer, sorting | 정렬 후 양끝 포인터를 움직이며 합이 0에 가장 가까운 두 값을 찾는다 |
+| [3706 합이 0이 되는 연속구간 세기](silver/3706_CountZeroSumSubarrays.py) | silver1 | prefix_sum, hash, counter | 같은 누적합이 나온 두 지점 사이의 구간 합이 0이라는 점을 이용한다 |
 | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) | platinum | meet_in_the_middle, hash, counter | `A+B = -(C+D)`로 나누고, `A+B` 합의 빈도수를 Counter에 저장해 센다 |
 | [1459 숫자고르기](gold/1459_NumberSelection.py) | gold | dfs, graph, cycle | `i -> numbers[i]` 형태의 함수형 그래프로 보고, 시작점으로 다시 돌아오는 숫자를 고른다 |
 | [2468 비밀번호](gold/2468_Password.py) | gold | math, bitmask, greedy | 이진수에서 1의 개수가 같은 가장 가까운 작은 수와 큰 수를 비트 패턴 재배치로 찾는다 |
@@ -111,6 +113,15 @@ monotone_stack
 | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) | platinum5 | bitmask, dp, graph, tsp | 방문 상태를 비트마스크로 표현하고 `dp[mask][current]`로 최소 비용을 저장한다 |
 
 ## 오늘 푼 문제
+
+### 3706 합이 0이 되는 연속구간 세기
+
+- 핵심 관찰: `prefix[j] - prefix[i] == 0`이면 `prefix[j] == prefix[i]`이다.
+- 접근 방향: 지금까지 나온 누적합의 개수를 `Counter`에 저장한다.
+- 초기값: 시작 전 누적합 `0`을 세기 위해 `prefix_count[0] = 1`로 시작한다.
+- 정답 갱신: 현재 누적합이 이전에 `k`번 나왔다면, 현재 위치에서 끝나는 합 0 구간이 `k`개 생긴다.
+- 갱신 순서: `answer += prefix_count[prefix_sum]`을 먼저 하고, 그 뒤 `prefix_count[prefix_sum] += 1`로 현재 누적합을 기록한다.
+- 복잡도: 수열을 한 번만 보므로 시간 `O(N)`, 누적합 개수 저장 때문에 공간 `O(N)`이다.
 
 ### 2300 용액
 
@@ -236,3 +247,4 @@ monotone_stack
 | 회의실 배정 그리디 | [학습 메모](learning_notes.md#note-18-meeting-room-greedy) |
 | 매개변수 탐색 | [학습 메모](learning_notes.md#note-19-parametric-search) |
 | 투 포인터 | [학습 메모](learning_notes.md#note-20-two-pointer) |
+| 누적합과 해시 | [학습 메모](learning_notes.md#note-21-prefix-sum-hash) |

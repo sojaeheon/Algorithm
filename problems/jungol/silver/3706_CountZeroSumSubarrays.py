@@ -1,5 +1,5 @@
 # JUNGOL 3706 합이 0이 되는 연속구간 세기
-# 난이도: gold
+# 난이도: silver1
 # 분류: prefix_sum, hash, dictionary
 # 핵심:
 #   누적합이 같은 두 지점 사이의 구간 합은 0이다.
@@ -36,9 +36,19 @@ import sys
 
 
 def solution(N, numbers):
-    # TODO: 누적합 + 해시로 합이 0인 연속구간 개수를 센다.
     answer = 0
     prefix_count = Counter()
+    prefix_count[0] = 1
+
+    prefix_sum = 0
+
+    for number in numbers:
+        prefix_sum += number
+
+        # 같은 누적합이 이전에 k번 있었다면,
+        # 현재 위치에서 끝나는 합 0 구간이 k개 생긴다.
+        answer += prefix_count[prefix_sum]
+        prefix_count[prefix_sum] += 1
 
     return answer
 
