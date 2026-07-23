@@ -36,8 +36,27 @@ import sys
 
 
 def solution(N, values):
-    # TODO: 투 포인터로 합이 0에 가장 가까운 두 값을 찾는다.
-    answer = []
+    values.sort()
+
+    left = 0
+    right = N - 1
+    best_sum = 10**18
+    answer = [values[left], values[right]]
+
+    while left < right:
+        current_sum = values[left] + values[right]
+
+        if abs(current_sum) < best_sum:
+            best_sum = abs(current_sum)
+            answer = [values[left], values[right]]
+
+            if best_sum == 0:
+                break
+
+        if current_sum < 0:
+            left += 1
+        else:
+            right -= 1
 
     return answer
 

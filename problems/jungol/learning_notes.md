@@ -27,6 +27,7 @@
 | 17 | [단조 스택](#note-17-monotone-stack) | [1809 탑](gold/1809_Tower.py), [1214 히스토그램](platinum/1214_Histogram.py) |
 | 18 | [회의실 배정 그리디](#note-18-meeting-room-greedy) | [1370 회의실 배정](silver/1370_MeetingRoomAssignment.py) |
 | 19 | [매개변수 탐색](#note-19-parametric-search) | [2581 예산](silver/2581_Budget.py) |
+| 20 | [투 포인터](#note-20-two-pointer) | [2300 용액](gold/2300_Solution.py) |
 
 ### 문제별 메모
 
@@ -40,6 +41,7 @@
 | [1809 탑](#problem-1809-tower) | 단조 스택, 가까운 큰 값 찾기 |
 | [1370 회의실 배정](#problem-1370-meeting-room-assignment) | 종료 시간 기준 그리디, 선택 조건 |
 | [2581 예산](#problem-2581-budget) | 이분 탐색, 매개변수 탐색, 가능/불가능 판단 |
+| [2300 용액](#problem-2300-solution) | 정렬, 투 포인터, 합의 부호에 따른 이동 |
 
 ## 주제별 메모
 
@@ -609,6 +611,51 @@ else:
 정해진 조건 안에서 가장 큰 값
 ```
 
+## note-20-two-pointer
+
+### 투 포인터
+
+투 포인터는 정렬된 배열이나 연속 구간에서 두 인덱스를 움직이며 답을 찾는 기법입니다.
+
+2300 용액에서는 정렬된 배열의 양끝에서 시작합니다.
+
+```python
+left = 0
+right = N - 1
+```
+
+현재 합을 확인합니다.
+
+```python
+current_sum = values[left] + values[right]
+```
+
+합이 0에 더 가까워지면 정답 후보를 갱신합니다.
+
+```python
+if abs(current_sum) < best_sum:
+    best_sum = abs(current_sum)
+    answer = [values[left], values[right]]
+```
+
+포인터 이동 기준은 합의 부호입니다.
+
+```python
+if current_sum < 0:
+    left += 1
+else:
+    right -= 1
+```
+
+의미:
+
+```text
+합이 음수이면 더 큰 값이 필요하므로 left를 오른쪽으로 옮긴다.
+합이 양수이면 더 작은 값이 필요하므로 right를 왼쪽으로 옮긴다.
+```
+
+정렬 후 한 번만 훑으므로 투 포인터 부분은 `O(N)`입니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -725,3 +772,17 @@ else:
 | [매개변수 탐색](#note-19-parametric-search) | 상한액 `cap`이 가능한지 판단하면서 가능한 최댓값을 찾기 위해 사용 |
 | `sum(min(request, cap))` | 상한액을 적용했을 때 실제 배정되는 총 예산을 계산 |
 | `used_budget <= total_budget` | 현재 상한액이 가능한지 판단하는 기준 |
+
+## problem-2300-solution
+
+### 2300 용액
+
+문제 파일: [2300_Solution.py](gold/2300_Solution.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [투 포인터](#note-20-two-pointer) | 정렬된 배열의 양끝에서 합이 0에 가까운 두 값을 빠르게 찾기 위해 사용 |
+| 합이 음수일 때 `left += 1` | 합을 키워 0에 가깝게 만들기 위해 사용 |
+| 합이 양수일 때 `right -= 1` | 합을 줄여 0에 가깝게 만들기 위해 사용 |

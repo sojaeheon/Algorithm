@@ -21,6 +21,7 @@ silver/1370_MeetingRoomAssignment.py
 silver/2581_Budget.py
 gold/1183_CoinVendingMachine.py
 gold/1809_Tower.py
+gold/2300_Solution.py
 gold/1459_NumberSelection.py
 gold/2468_Password.py
 gold/3337_ShoppingMall.py
@@ -99,6 +100,7 @@ monotone_stack
 | [2581 예산](silver/2581_Budget.py) | silver | binary_search, parametric_search | 상한액 `cap`이 가능한지 판단하며 가능한 최대 상한액을 이분 탐색으로 찾는다 |
 | [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다 |
 | [1809 탑](gold/1809_Tower.py) | gold | stack, monotone_stack | 현재 탑보다 낮은 왼쪽 탑을 제거하고, 남은 stack top을 수신 탑으로 사용한다 |
+| [2300 용액](gold/2300_Solution.py) | gold | two_pointer, sorting | 정렬 후 양끝 포인터를 움직이며 합이 0에 가장 가까운 두 값을 찾는다 |
 | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) | platinum | meet_in_the_middle, hash, counter | `A+B = -(C+D)`로 나누고, `A+B` 합의 빈도수를 Counter에 저장해 센다 |
 | [1459 숫자고르기](gold/1459_NumberSelection.py) | gold | dfs, graph, cycle | `i -> numbers[i]` 형태의 함수형 그래프로 보고, 시작점으로 다시 돌아오는 숫자를 고른다 |
 | [2468 비밀번호](gold/2468_Password.py) | gold | math, bitmask, greedy | 이진수에서 1의 개수가 같은 가장 가까운 작은 수와 큰 수를 비트 패턴 재배치로 찾는다 |
@@ -109,6 +111,15 @@ monotone_stack
 | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) | platinum5 | bitmask, dp, graph, tsp | 방문 상태를 비트마스크로 표현하고 `dp[mask][current]`로 최소 비용을 저장한다 |
 
 ## 오늘 푼 문제
+
+### 2300 용액
+
+- 핵심 관찰: 두 용액의 합이 0에 가까워야 하므로, 정렬 후 가장 작은 값과 가장 큰 값부터 비교한다.
+- 접근 방향: `left = 0`, `right = N - 1`에서 시작하는 투 포인터를 사용한다.
+- 정답 갱신: `abs(values[left] + values[right])`가 더 작으면 현재 두 값을 정답 후보로 저장한다.
+- 이동 기준: 합이 음수이면 값을 키워야 하므로 `left += 1`, 합이 양수이면 값을 줄여야 하므로 `right -= 1` 한다.
+- 조기 종료: 합의 절댓값이 `0`이면 더 좋은 답이 없으므로 바로 끝낼 수 있다.
+- 복잡도: 정렬 때문에 시간 `O(N log N)`, 투 포인터 탐색은 `O(N)`이다.
 
 ### 2581 예산
 
@@ -224,3 +235,4 @@ monotone_stack
 | 단조 스택 | [학습 메모](learning_notes.md#note-17-monotone-stack) |
 | 회의실 배정 그리디 | [학습 메모](learning_notes.md#note-18-meeting-room-greedy) |
 | 매개변수 탐색 | [학습 메모](learning_notes.md#note-19-parametric-search) |
+| 투 포인터 | [학습 메모](learning_notes.md#note-20-two-pointer) |
