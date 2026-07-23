@@ -19,9 +19,14 @@ JUNGOL 문제 풀이를 정리하는 폴더입니다.
 silver/1997_TigerEatingRiceCakes.py
 silver/1370_MeetingRoomAssignment.py
 silver/2581_Budget.py
+silver/1912_MazeSearch.py
 gold/1183_CoinVendingMachine.py
 gold/1809_Tower.py
 gold/2300_Solution.py
+gold/2613_Tomato.py
+gold/1082_EscapeFromFire.py
+gold/1840_Cheese.py
+gold/1027_GoodSequence.py
 silver/3706_CountZeroSumSubarrays.py
 gold/1459_NumberSelection.py
 gold/2468_Password.py
