@@ -108,6 +108,7 @@ monotone_stack
 | [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다 |
 | [1809 탑](gold/1809_Tower.py) | gold | stack, monotone_stack | 현재 탑보다 낮은 왼쪽 탑을 제거하고, 남은 stack top을 수신 탑으로 사용한다 |
 | [2300 용액](gold/2300_Solution.py) | gold | two_pointer, sorting | 정렬 후 양끝 포인터를 움직이며 합이 0에 가장 가까운 두 값을 찾는다 |
+| [2613 토마토(고)](gold/2613_Tomato.py) | gold | bfs, queue, graph | 처음부터 익은 모든 토마토를 동시에 BFS 시작점으로 넣어 최소 날짜를 구한다 |
 | [3706 합이 0이 되는 연속구간 세기](silver/3706_CountZeroSumSubarrays.py) | silver1 | prefix_sum, hash, counter | 같은 누적합이 나온 두 지점 사이의 구간 합이 0이라는 점을 이용한다 |
 | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) | platinum | meet_in_the_middle, hash, counter | `A+B = -(C+D)`로 나누고, `A+B` 합의 빈도수를 Counter에 저장해 센다 |
 | [1459 숫자고르기](gold/1459_NumberSelection.py) | gold | dfs, graph, cycle | `i -> numbers[i]` 형태의 함수형 그래프로 보고, 시작점으로 다시 돌아오는 숫자를 고른다 |
@@ -137,6 +138,15 @@ monotone_stack
 - 구현 선택: `N`이 최대 100000이라 재귀 DFS는 깊이 제한에 걸릴 수 있으므로 `stack`으로 반복 DFS를 구현한다.
 - `next_index` 역할: 각 방에서 인접 리스트를 어디까지 확인했는지 저장해, 되돌아온 뒤 같은 인접 방을 처음부터 다시 훑지 않게 한다.
 - 복잡도: 인접 리스트 정렬 때문에 시간 `O(M log M)` 수준, 탐색 자체는 `O(N + M)`, 공간은 `O(N + M)`이다.
+
+### 2613 토마토(고)
+
+- 핵심 관찰: 익은 토마토가 여러 개라면 모든 익은 토마토에서 동시에 익음이 퍼진다.
+- 접근 방향: 처음부터 익은 토마토 위치를 모두 큐에 넣는 multi-source BFS를 사용한다.
+- 날짜 계산: 처음 익은 토마토를 `1`로 두고, 새로 익은 칸에는 `이전 칸 값 + 1`을 저장한다. 실제 날짜는 `box 값 - 1`이다.
+- 불가능 판단: `unripe_count`로 익지 않은 토마토 수를 관리하고, BFS가 끝난 뒤 남아 있으면 `-1`을 출력한다.
+- 최적화: `unripe_count`를 쓰면 BFS 후 전체 상자를 다시 훑지 않아도 된다.
+- 복잡도: 각 칸은 최대 한 번 큐에 들어가므로 시간 `O(NM)`, 상자와 큐 때문에 공간 `O(NM)`이다.
 
 ### 2300 용액
 

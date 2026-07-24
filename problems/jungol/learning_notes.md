@@ -30,6 +30,7 @@
 | 20 | [투 포인터](#note-20-two-pointer) | [2300 용액](gold/2300_Solution.py) |
 | 21 | [누적합과 해시](#note-21-prefix-sum-hash) | [3706 합이 0이 되는 연속구간 세기](silver/3706_CountZeroSumSubarrays.py) |
 | 22 | [반복 DFS와 stack](#note-22-iterative-dfs-stack) | [1912 미로 탐색](gold/1912_MazeSearch.py) |
+| 23 | [multi-source BFS](#note-23-multi-source-bfs) | [2613 토마토(고)](gold/2613_Tomato.py) |
 
 ### 문제별 메모
 
@@ -46,6 +47,7 @@
 | [2300 용액](#problem-2300-solution) | 정렬, 투 포인터, 합의 부호에 따른 이동 |
 | [3706 합이 0이 되는 연속구간 세기](#problem-3706-count-zero-sum-subarrays) | 누적합, Counter, 같은 누적합 쌍 |
 | [1912 미로 탐색](#problem-1912-maze-search) | 반복 DFS, stack, 인접 리스트 정렬 |
+| [2613 토마토(고)](#problem-2613-tomato) | multi-source BFS, 날짜 기록, 불가능 판단 |
 
 ## 주제별 메모
 
@@ -750,6 +752,52 @@ next_index[room] = graph[room]에서 다음에 확인할 인덱스
 
 이 패턴은 "재귀 DFS는 깊이 때문에 위험하지만, DFS 순서는 유지해야 하는 문제"에서 유용합니다.
 
+## note-23-multi-source-bfs
+
+### multi-source BFS
+
+multi-source BFS는 시작점이 여러 개인 BFS입니다.
+
+일반 BFS는 시작점 하나를 큐에 넣고 시작합니다.
+
+```python
+queue.append(start)
+```
+
+하지만 2613 토마토처럼 처음부터 익은 토마토가 여러 개라면, 모든 익은 토마토를 동시에 시작점으로 넣어야 합니다.
+
+```python
+for row in range(N):
+    for col in range(M):
+        if box[row][col] == 1:
+            queue.append((row, col))
+```
+
+이렇게 하면 여러 위치에서 동시에 퍼지는 상황을 자연스럽게 처리할 수 있습니다.
+
+2613에서는 칸의 값을 날짜처럼 사용합니다.
+
+```python
+box[next_row][next_col] = box[row][col] + 1
+days = box[next_row][next_col] - 1
+```
+
+의미:
+
+```text
+1 = 처음부터 익은 토마토, 0일
+2 = 1일 뒤 익은 토마토
+3 = 2일 뒤 익은 토마토
+```
+
+불가능 여부는 익지 않은 토마토 개수를 세면 편합니다.
+
+```python
+unripe_count -= 1
+```
+
+BFS가 끝난 뒤 `unripe_count`가 남아 있으면, 빈 칸이나 벽 때문에 끝까지 익지 못하는 토마토가 있다는 뜻입니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -908,3 +956,17 @@ next_index[room] = graph[room]에서 다음에 확인할 인덱스
 | [반복 DFS와 stack](#note-22-iterative-dfs-stack) | 재귀 깊이 제한 없이 DFS 탐색 순서를 구현하기 위해 사용 |
 | 인접 리스트 정렬 | 방문하지 않은 인접 방 중 번호가 가장 작은 방을 먼저 가야 하기 때문 |
 | `next_index` 배열 | 각 방에서 인접 방을 어디까지 확인했는지 저장해 불필요한 반복 탐색을 줄이기 위해 사용 |
+
+## problem-2613-tomato
+
+### 2613 토마토(고)
+
+문제 파일: [2613_Tomato.py](gold/2613_Tomato.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [multi-source BFS](#note-23-multi-source-bfs) | 처음부터 익은 여러 토마토가 동시에 퍼지는 상황을 처리하기 위해 사용 |
+| 칸 값으로 날짜 기록 | `box[row][col] + 1`로 다음 날 익은 토마토를 표시하기 위해 사용 |
+| `unripe_count` | BFS 후 전체 배열을 다시 훑지 않고 익지 못한 토마토가 남았는지 판단하기 위해 사용 |
