@@ -109,6 +109,7 @@ monotone_stack
 | [1809 탑](gold/1809_Tower.py) | gold | stack, monotone_stack | 현재 탑보다 낮은 왼쪽 탑을 제거하고, 남은 stack top을 수신 탑으로 사용한다 |
 | [2300 용액](gold/2300_Solution.py) | gold | two_pointer, sorting | 정렬 후 양끝 포인터를 움직이며 합이 0에 가장 가까운 두 값을 찾는다 |
 | [2613 토마토(고)](gold/2613_Tomato.py) | gold | bfs, queue, graph | 처음부터 익은 모든 토마토를 동시에 BFS 시작점으로 넣어 최소 날짜를 구한다 |
+| [1082 화염에서탈출](gold/1082_EscapeFromFire.py) | gold4 | bfs, queue, simulation | 불의 도착 시간을 먼저 계산하고 사람이 불보다 먼저 도착할 수 있는 칸만 이동한다 |
 | [3706 합이 0이 되는 연속구간 세기](silver/3706_CountZeroSumSubarrays.py) | silver1 | prefix_sum, hash, counter | 같은 누적합이 나온 두 지점 사이의 구간 합이 0이라는 점을 이용한다 |
 | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) | platinum | meet_in_the_middle, hash, counter | `A+B = -(C+D)`로 나누고, `A+B` 합의 빈도수를 Counter에 저장해 센다 |
 | [1459 숫자고르기](gold/1459_NumberSelection.py) | gold | dfs, graph, cycle | `i -> numbers[i]` 형태의 함수형 그래프로 보고, 시작점으로 다시 돌아오는 숫자를 고른다 |
@@ -147,6 +148,16 @@ monotone_stack
 - 불가능 판단: `unripe_count`로 익지 않은 토마토 수를 관리하고, BFS가 끝난 뒤 남아 있으면 `-1`을 출력한다.
 - 최적화: `unripe_count`를 쓰면 BFS 후 전체 상자를 다시 훑지 않아도 된다.
 - 복잡도: 각 칸은 최대 한 번 큐에 들어가므로 시간 `O(NM)`, 상자와 큐 때문에 공간 `O(NM)`이다.
+
+### 1082 화염에서탈출
+
+- 핵심 관찰: 사람과 불이 동시에 움직이므로, 사람이 어떤 칸에 도착하는 시간보다 불이 먼저 또는 동시에 도착하면 그 칸은 갈 수 없다.
+- 접근 방향: 불의 도착 시간을 먼저 BFS로 계산하고, 이후 사람 BFS에서 안전한 칸만 이동한다.
+- `fire_time` 의미: `fire_time[r][c]`는 불이 `(r, c)` 칸에 처음 도착하는 시간이다. `INF`면 불이 도착하지 못하는 칸이다.
+- 방문 체크: `fire_time[next_row][next_col] != INF`는 이미 불 도착 시간이 기록된 칸이므로 다시 큐에 넣지 않겠다는 뜻이다.
+- 이동 조건: `fire_time[next_row][next_col] <= next_time`이면 불이 같거나 더 빠르게 도착하므로 이동할 수 없다.
+- 목적지 처리: 목적지 `D`는 불이 번지지 않는 칸으로 보고, 사람 BFS에서 도착하면 즉시 최소 시간을 반환한다.
+- 복잡도: 불 BFS와 사람 BFS 모두 각 칸을 최대 한 번씩 보므로 시간 `O(RC)`, `fire_time`, `person_time`, 큐 때문에 공간 `O(RC)`이다.
 
 ### 2300 용액
 

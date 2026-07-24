@@ -31,6 +31,7 @@
 | 21 | [누적합과 해시](#note-21-prefix-sum-hash) | [3706 합이 0이 되는 연속구간 세기](silver/3706_CountZeroSumSubarrays.py) |
 | 22 | [반복 DFS와 stack](#note-22-iterative-dfs-stack) | [1912 미로 탐색](gold/1912_MazeSearch.py) |
 | 23 | [multi-source BFS](#note-23-multi-source-bfs) | [2613 토마토(고)](gold/2613_Tomato.py) |
+| 24 | [불/사람 동시 이동 BFS](#note-24-fire-escape-bfs) | [1082 화염에서탈출](gold/1082_EscapeFromFire.py) |
 
 ### 문제별 메모
 
@@ -48,6 +49,7 @@
 | [3706 합이 0이 되는 연속구간 세기](#problem-3706-count-zero-sum-subarrays) | 누적합, Counter, 같은 누적합 쌍 |
 | [1912 미로 탐색](#problem-1912-maze-search) | 반복 DFS, stack, 인접 리스트 정렬 |
 | [2613 토마토(고)](#problem-2613-tomato) | multi-source BFS, 날짜 기록, 불가능 판단 |
+| [1082 화염에서탈출](#problem-1082-escape-from-fire) | 불 BFS, 사람 BFS, 동시 도착 금지 |
 
 ## 주제별 메모
 
@@ -798,6 +800,60 @@ unripe_count -= 1
 
 BFS가 끝난 뒤 `unripe_count`가 남아 있으면, 빈 칸이나 벽 때문에 끝까지 익지 못하는 토마토가 있다는 뜻입니다.
 
+## note-24-fire-escape-bfs
+
+### 불/사람 동시 이동 BFS
+
+불과 사람이 동시에 움직이는 문제에서는 사람을 먼저 움직이면 위험한 칸을 잘못 밟을 수 있습니다.
+
+그래서 보통 두 단계로 나눕니다.
+
+```text
+1. 불이 각 칸에 언제 도착하는지 먼저 BFS로 계산한다.
+2. 사람이 이동할 때 불보다 먼저 도착할 수 있는 칸만 이동한다.
+```
+
+불 도착 시간 배열은 이렇게 둡니다.
+
+```python
+INF = 10**9
+fire_time = [[INF] * C for _ in range(R)]
+```
+
+`INF`는 아직 불이 도착하지 않았다는 뜻입니다.
+
+불 BFS에서 이미 시간이 기록된 칸은 다시 볼 필요가 없습니다.
+
+```python
+if fire_time[next_row][next_col] != INF:
+    continue
+```
+
+BFS는 가까운 시간부터 퍼지기 때문에 처음 기록된 시간이 가장 빠른 도착 시간입니다.
+
+사람 BFS에서는 다음 칸에 도착하는 시간을 먼저 구합니다.
+
+```python
+next_time = person_time[row][col] + 1
+```
+
+그리고 불이 같은 시간 또는 더 먼저 도착하는 칸은 이동하지 않습니다.
+
+```python
+if fire_time[next_row][next_col] <= next_time:
+    continue
+```
+
+의미:
+
+```text
+불 도착 시간 <= 사람 도착 시간
+=> 사람이 도착했을 때 이미 불이 있거나 동시에 불이 붙는 칸
+=> 이동 불가
+```
+
+이 패턴은 "불", "물", "독가스"처럼 위험 요소가 퍼지고, 사람이 그 위험을 피해 이동하는 문제에서 자주 나옵니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -970,3 +1026,18 @@ BFS가 끝난 뒤 `unripe_count`가 남아 있으면, 빈 칸이나 벽 때문�
 | [multi-source BFS](#note-23-multi-source-bfs) | 처음부터 익은 여러 토마토가 동시에 퍼지는 상황을 처리하기 위해 사용 |
 | 칸 값으로 날짜 기록 | `box[row][col] + 1`로 다음 날 익은 토마토를 표시하기 위해 사용 |
 | `unripe_count` | BFS 후 전체 배열을 다시 훑지 않고 익지 못한 토마토가 남았는지 판단하기 위해 사용 |
+
+## problem-1082-escape-from-fire
+
+### 1082 화염에서탈출
+
+문제 파일: [1082_EscapeFromFire.py](gold/1082_EscapeFromFire.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [불/사람 동시 이동 BFS](#note-24-fire-escape-bfs) | 위험 요소가 퍼지는 시간을 먼저 계산하고 사람이 안전한 칸만 이동하기 위해 사용 |
+| `fire_time` 배열 | 불이 각 칸에 가장 빨리 도착하는 시간을 저장하기 위해 사용 |
+| `fire_time[next] <= next_time` | 불이 같거나 더 빠르게 도착하는 칸을 막기 위해 사용 |
+| `INF` | 불이 도착하지 못한 칸과 아직 방문하지 않은 칸을 구분하기 위해 사용 |
