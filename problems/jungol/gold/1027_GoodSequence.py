@@ -1,50 +1,42 @@
 # JUNGOL 1027 좋은수열
-# 난이도: gold
-# 분류: backtracking, dfs
-# 핵심:
-#   1, 2, 3을 작은 숫자부터 붙여 보면서 좋은 수열인지 검사한다.
-#   처음 완성되는 길이 N의 수열이 가장 작은 좋은 수열이다.
-# 시간 복잡도: O(3^N)
-# 공간 복잡도: O(N)
+# 분류: 백트래킹, DFS
+# 핵심: 1, 2, 3을 작은 순서로 붙이고, 새로 생긴 마지막 부분만 검사한다.
 
 import sys
 
 
-# 1. 문제 이해
-# - 입력:
-#   N: 만들어야 하는 수열의 길이
-# - 출력:
-#   1, 2, 3으로만 이루어진 길이 N의 좋은 수열 중 가장 작은 수열
-# - 좋은 수열:
-#   인접한 두 부분 수열이 같은 경우가 없어야 한다.
-#   예: 1212는 뒤의 12와 앞의 12가 붙어 있으므로 나쁜 수열이다.
-
-
-# 2. 아이디어
-# - 가장 작은 수열을 원하므로 1, 2, 3 순서로 붙인다.
-# - 숫자를 하나 붙일 때마다 마지막 부분만 검사하면 된다.
-# - 길이 k짜리 마지막 두 덩어리가 같은지 확인한다.
-# - 나쁜 수열이 되는 순간 더 깊이 탐색하지 않는다.
-
-
-# 3. 풀이 계획
-# 1) 현재 수열을 문자열 또는 리스트로 관리한다.
-# 2) candidate에 1, 2, 3을 차례대로 붙여본다.
-# 3) 붙인 뒤 좋은 수열인지 검사한다.
-# 4) 좋으면 다음 깊이로 DFS를 진행한다.
-# 5) 길이가 N이 되면 바로 정답으로 반환한다.
-
-
 def is_good(sequence):
-    # TODO: sequence의 마지막 부분에서 같은 인접 부분 수열이 있는지 검사
-    # return True 또는 False
-    pass
+    """마지막 숫자를 붙인 뒤 같은 두 부분 수열이 인접했는지 검사한다."""
+    length = len(sequence)
+
+    # 비교할 두 부분 수열의 길이
+    for size in range(1, length // 2 + 1):
+        if sequence[length - 2 * size : length - size] == sequence[length - size :]:
+            return False
+
+    return True
 
 
-def solution(N):
-    # TODO: 백트래킹 로직 작성
-    # return answer
-    pass
+def solution(n):
+    sequence = []
+
+    def dfs():
+        if len(sequence) == n:
+            return True
+
+        # 작은 숫자부터 시도하므로 처음 완성된 수열이 정답이다.
+        for number in "123":
+            sequence.append(number)
+
+            if is_good(sequence) and dfs():
+                return True
+
+            sequence.pop()
+
+        return False
+
+    dfs()
+    return "".join(sequence)
 
 
 if __name__ == "__main__":

@@ -33,6 +33,7 @@
 | 23 | [multi-source BFS](#note-23-multi-source-bfs) | [2613 토마토(고)](gold/2613_Tomato.py) |
 | 24 | [불/사람 동시 이동 BFS](#note-24-fire-escape-bfs) | [1082 화염에서탈출](gold/1082_EscapeFromFire.py) |
 | 25 | [바깥 공기 BFS](#note-25-outside-air-bfs) | [1840 치즈](gold/1840_Cheese.py) |
+| 26 | [백트래킹에서 마지막 부분만 검사하기](#note-26-backtracking-suffix-check) | [1027 좋은수열](gold/1027_GoodSequence.py) |
 
 ### 문제별 메모
 
@@ -52,6 +53,7 @@
 | [2613 토마토(고)](#problem-2613-tomato) | multi-source BFS, 날짜 기록, 불가능 판단 |
 | [1082 화염에서탈출](#problem-1082-escape-from-fire) | 불 BFS, 사람 BFS, 동시 도착 금지 |
 | [1840 치즈](#problem-1840-cheese) | 바깥 공기 BFS, 시뮬레이션, 마지막 치즈 수 |
+| [1027 좋은수열](#problem-1027-good-sequence) | 백트래킹, 접미부 비교, 사전순 탐색 |
 
 ## 주제별 메모
 
@@ -911,6 +913,46 @@ for row, col in melt:
 
 `N, M <= 100`이고 한 시간마다 바깥쪽 치즈가 한 겹씩 녹으므로 `T`는 보통 최대 약 `min(N, M) / 2` 수준입니다.
 
+## note-26-backtracking-suffix-check
+
+### 백트래킹에서 마지막 부분만 검사하기
+
+백트래킹으로 조건을 만족하는 수열을 한 글자씩 만들 때, 새 글자를 붙이기 전의 수열은 이미 조건을 만족한다.
+따라서 새로 조건을 위반할 수 있는 부분에는 반드시 방금 붙인 마지막 글자가 포함된다.
+
+1027 좋은수열에서는 수열 전체의 모든 구간을 다시 검사하지 않고, 맨 뒤에 붙어 있는 같은 길이의 두 덩어리만 비교한다.
+
+```text
+sequence = [기존 부분 | 왼쪽 덩어리 | 오른쪽 덩어리]
+                         size개          size개
+```
+
+두 덩어리의 범위는 다음과 같다.
+
+```python
+left_part = sequence[length - 2 * size : length - size]
+right_part = sequence[length - size :]
+```
+
+예를 들어 `sequence = 1212`, `length = 4`, `size = 2`이면 다음처럼 비교된다.
+
+```python
+left_part = sequence[0:2]  # 12
+right_part = sequence[2:]  # 12
+```
+
+두 부분이 같으므로 `1212`는 나쁜 수열이다.
+
+`size`를 `length // 2`까지만 검사하는 이유는 길이 `size`인 덩어리 두 개를 만들려면 원소가 최소 `2 * size`개 필요하기 때문이다.
+
+```python
+for size in range(1, length // 2 + 1):
+    if left_part == right_part:
+        return False
+```
+
+또한 답이 가장 작은 수열이어야 할 때 후보를 `1`, `2`, `3` 순서로 탐색하면 DFS에서 처음 완성된 답이 곧 최솟값이다. 이처럼 탐색 순서를 정답의 정렬 순서와 맞추면 모든 정답을 저장해서 비교할 필요가 없다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -1113,3 +1155,18 @@ for row, col in melt:
 | `melt` 리스트 | 같은 시간에 녹을 치즈를 모아두었다가 한꺼번에 녹이기 위해 사용 |
 | `last_cheese_count` | 모두 녹기 한 시간 전에 남아 있던 치즈 칸 수를 출력하기 위해 사용 |
 | `O(TNM)` | `T`번의 시간 동안 매번 최대 `N*M`칸을 BFS로 확인하기 때문 |
+
+## problem-1027-good-sequence
+
+### 1027 좋은수열
+
+문제 파일: [1027_GoodSequence.py](gold/1027_GoodSequence.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [백트래킹에서 마지막 부분만 검사하기](#note-26-backtracking-suffix-check) | 숫자를 하나 붙인 뒤 새롭게 생길 수 있는 나쁜 부분은 수열의 마지막에만 있기 때문 |
+| `1 → 2 → 3` 순서의 DFS | 처음 완성된 좋은 수열이 숫자로 보았을 때 가장 작은 수열이 되도록 하기 위해 사용 |
+| `sequence.append()`와 `sequence.pop()` | 후보 숫자를 선택하고, 실패하면 선택 전 상태로 되돌리기 위해 사용 |
+| 성공 여부를 반환하는 DFS | 정답을 찾은 뒤 남은 탐색을 즉시 중단하기 위해 사용 |
