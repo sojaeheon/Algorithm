@@ -29,6 +29,7 @@
 | 19 | [매개변수 탐색](#note-19-parametric-search) | [2581 예산](silver/2581_Budget.py) |
 | 20 | [투 포인터](#note-20-two-pointer) | [2300 용액](gold/2300_Solution.py) |
 | 21 | [누적합과 해시](#note-21-prefix-sum-hash) | [3706 합이 0이 되는 연속구간 세기](silver/3706_CountZeroSumSubarrays.py) |
+| 22 | [반복 DFS와 stack](#note-22-iterative-dfs-stack) | [1912 미로 탐색](gold/1912_MazeSearch.py) |
 
 ### 문제별 메모
 
@@ -44,6 +45,7 @@
 | [2581 예산](#problem-2581-budget) | 이분 탐색, 매개변수 탐색, 가능/불가능 판단 |
 | [2300 용액](#problem-2300-solution) | 정렬, 투 포인터, 합의 부호에 따른 이동 |
 | [3706 합이 0이 되는 연속구간 세기](#problem-3706-count-zero-sum-subarrays) | 누적합, Counter, 같은 누적합 쌍 |
+| [1912 미로 탐색](#problem-1912-maze-search) | 반복 DFS, stack, 인접 리스트 정렬 |
 
 ## 주제별 메모
 
@@ -699,6 +701,55 @@ numbers = [1, -1, 2, -2]
 
 마지막 누적합 0을 볼 때 이전에 0이 두 번 있었으므로, 현재 위치에서 끝나는 합 0 구간이 두 개 생깁니다.
 
+## note-22-iterative-dfs-stack
+
+### 반복 DFS와 stack
+
+재귀 DFS는 코드가 짧지만, 깊이가 큰 그래프에서는 재귀 제한 때문에 위험할 수 있습니다.
+
+```python
+def dfs(node):
+    visited[node] = True
+    for next_node in graph[node]:
+        if not visited[next_node]:
+            dfs(next_node)
+```
+
+1912처럼 `N`이 최대 100000이면 한 방향으로 길게 이어진 그래프에서 재귀 깊이가 커질 수 있습니다.
+
+이럴 때는 `stack`으로 DFS를 직접 구현합니다.
+
+```python
+stack = [1]
+visited[1] = True
+
+while stack:
+    current = stack[-1]
+```
+
+`stack[-1]`은 현재 위치입니다. 더 갈 수 있는 방이 있으면 그 방을 `append()`하고, 더 갈 방이 없으면 `pop()`해서 이전 방으로 돌아갑니다.
+
+1912에서는 각 방의 인접 방을 번호가 작은 순서대로 봐야 하므로 정렬이 필요합니다.
+
+```python
+for room in range(1, N + 1):
+    graph[room].sort()
+```
+
+또한 되돌아온 뒤 같은 인접 방들을 처음부터 다시 검사하면 느려질 수 있으므로, 방마다 다음에 볼 위치를 저장합니다.
+
+```python
+next_index = [0] * (N + 1)
+```
+
+의미:
+
+```text
+next_index[room] = graph[room]에서 다음에 확인할 인덱스
+```
+
+이 패턴은 "재귀 DFS는 깊이 때문에 위험하지만, DFS 순서는 유지해야 하는 문제"에서 유용합니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -843,3 +894,17 @@ numbers = [1, -1, 2, -2]
 | [누적합과 해시](#note-21-prefix-sum-hash) | 같은 누적합이 나온 두 지점 사이의 구간 합이 0이기 때문 |
 | `prefix_count[0] = 1` | 시작 지점부터 합이 0인 구간을 세기 위해 필요 |
 | `answer += prefix_count[prefix_sum]` | 현재 누적합과 같은 이전 누적합 개수만큼 합 0 구간이 생김 |
+
+## problem-1912-maze-search
+
+### 1912 미로 탐색
+
+문제 파일: [1912_MazeSearch.py](gold/1912_MazeSearch.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [반복 DFS와 stack](#note-22-iterative-dfs-stack) | 재귀 깊이 제한 없이 DFS 탐색 순서를 구현하기 위해 사용 |
+| 인접 리스트 정렬 | 방문하지 않은 인접 방 중 번호가 가장 작은 방을 먼저 가야 하기 때문 |
+| `next_index` 배열 | 각 방에서 인접 방을 어디까지 확인했는지 저장해 불필요한 반복 탐색을 줄이기 위해 사용 |

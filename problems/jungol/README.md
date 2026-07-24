@@ -19,7 +19,7 @@ JUNGOL 문제 풀이를 정리하는 폴더입니다.
 silver/1997_TigerEatingRiceCakes.py
 silver/1370_MeetingRoomAssignment.py
 silver/2581_Budget.py
-silver/1912_MazeSearch.py
+gold/1912_MazeSearch.py
 gold/1183_CoinVendingMachine.py
 gold/1809_Tower.py
 gold/2300_Solution.py
@@ -104,6 +104,7 @@ monotone_stack
 | [1997 떡 먹는 호랑이](silver/1997_TigerEatingRiceCakes.py) | silver | dp, brute_force, fibonacci | D일째 떡 개수를 `x*A + y*B`로 표현하고, A를 대입해 B를 찾는다 |
 | [1370 회의실 배정](silver/1370_MeetingRoomAssignment.py) | silver2 | greedy, sorting | 종료 시간이 빠른 회의부터 선택해 한 회의실에 배정 가능한 회의 수를 최대로 만든다 |
 | [2581 예산](silver/2581_Budget.py) | silver | binary_search, parametric_search | 상한액 `cap`이 가능한지 판단하며 가능한 최대 상한액을 이분 탐색으로 찾는다 |
+| [1912 미로 탐색](gold/1912_MazeSearch.py) | gold4 | graph, dfs, stack, sorting | 인접 방을 번호순으로 정렬하고 stack DFS로 처음 방문한 순서를 구한다 |
 | [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다 |
 | [1809 탑](gold/1809_Tower.py) | gold | stack, monotone_stack | 현재 탑보다 낮은 왼쪽 탑을 제거하고, 남은 stack top을 수신 탑으로 사용한다 |
 | [2300 용액](gold/2300_Solution.py) | gold | two_pointer, sorting | 정렬 후 양끝 포인터를 움직이며 합이 0에 가장 가까운 두 값을 찾는다 |
@@ -127,6 +128,15 @@ monotone_stack
 - 정답 갱신: 현재 누적합이 이전에 `k`번 나왔다면, 현재 위치에서 끝나는 합 0 구간이 `k`개 생긴다.
 - 갱신 순서: `answer += prefix_count[prefix_sum]`을 먼저 하고, 그 뒤 `prefix_count[prefix_sum] += 1`로 현재 누적합을 기록한다.
 - 복잡도: 수열을 한 번만 보므로 시간 `O(N)`, 누적합 개수 저장 때문에 공간 `O(N)`이다.
+
+### 1912 미로 탐색
+
+- 핵심 관찰: 현재 방에서 방문하지 않은 인접 방이 여러 개라면 번호가 가장 작은 방을 먼저 방문해야 한다.
+- 접근 방향: 방과 문을 양방향 그래프로 보고, 각 방의 인접 리스트를 오름차순 정렬한다.
+- DFS 방식: 깊게 들어가다가 더 갈 방이 없으면 이전 방으로 되돌아가므로 DFS와 같다.
+- 구현 선택: `N`이 최대 100000이라 재귀 DFS는 깊이 제한에 걸릴 수 있으므로 `stack`으로 반복 DFS를 구현한다.
+- `next_index` 역할: 각 방에서 인접 리스트를 어디까지 확인했는지 저장해, 되돌아온 뒤 같은 인접 방을 처음부터 다시 훑지 않게 한다.
+- 복잡도: 인접 리스트 정렬 때문에 시간 `O(M log M)` 수준, 탐색 자체는 `O(N + M)`, 공간은 `O(N + M)`이다.
 
 ### 2300 용액
 
