@@ -32,6 +32,7 @@
 | 22 | [반복 DFS와 stack](#note-22-iterative-dfs-stack) | [1912 미로 탐색](gold/1912_MazeSearch.py) |
 | 23 | [multi-source BFS](#note-23-multi-source-bfs) | [2613 토마토(고)](gold/2613_Tomato.py) |
 | 24 | [불/사람 동시 이동 BFS](#note-24-fire-escape-bfs) | [1082 화염에서탈출](gold/1082_EscapeFromFire.py) |
+| 25 | [바깥 공기 BFS](#note-25-outside-air-bfs) | [1840 치즈](gold/1840_Cheese.py) |
 
 ### 문제별 메모
 
@@ -50,6 +51,7 @@
 | [1912 미로 탐색](#problem-1912-maze-search) | 반복 DFS, stack, 인접 리스트 정렬 |
 | [2613 토마토(고)](#problem-2613-tomato) | multi-source BFS, 날짜 기록, 불가능 판단 |
 | [1082 화염에서탈출](#problem-1082-escape-from-fire) | 불 BFS, 사람 BFS, 동시 도착 금지 |
+| [1840 치즈](#problem-1840-cheese) | 바깥 공기 BFS, 시뮬레이션, 마지막 치즈 수 |
 
 ## 주제별 메모
 
@@ -854,6 +856,61 @@ if fire_time[next_row][next_col] <= next_time:
 
 이 패턴은 "불", "물", "독가스"처럼 위험 요소가 퍼지고, 사람이 그 위험을 피해 이동하는 문제에서 자주 나옵니다.
 
+## note-25-outside-air-bfs
+
+### 바깥 공기 BFS
+
+격자에서 `0`이 모두 같은 의미가 아닐 때가 있습니다.
+
+1840 치즈에서는 `0`이 두 종류입니다.
+
+```text
+1. 바깥 공기와 연결된 0
+2. 치즈 내부 구멍에 있는 0
+```
+
+치즈는 바깥 공기와 닿아야 녹습니다. 그래서 내부 구멍의 `0`은 아직 공기처럼 처리하면 안 됩니다.
+
+이럴 때는 가장자리의 빈 칸에서 BFS를 시작합니다.
+
+```python
+queue.append((0, 0))
+visited[0][0] = True
+```
+
+문제에서 판의 가장자리에는 치즈가 없다고 했으므로 `(0, 0)`은 항상 바깥 공기입니다.
+
+BFS 중 치즈를 만나면 큐에 넣지 않고 녹일 목록에 저장합니다.
+
+```python
+if board[next_row][next_col] == 1:
+    melt.append((next_row, next_col))
+else:
+    queue.append((next_row, next_col))
+```
+
+치즈를 바로 `0`으로 바꾸지 않는 이유가 중요합니다.
+
+```text
+같은 시간에 녹는 치즈를 바로 0으로 만들면,
+그 시간 안에 안쪽 치즈까지 공기가 들어간 것처럼 탐색될 수 있다.
+```
+
+그래서 이번 시간에 녹을 치즈를 `melt`에 모아두었다가 BFS가 끝난 뒤 한꺼번에 녹입니다.
+
+```python
+for row, col in melt:
+    board[row][col] = 0
+```
+
+시간복잡도에서 `T`는 전체 치즈가 녹는 데 걸리는 시간입니다.
+
+```text
+시간복잡도: O(T * N * M)
+```
+
+`N, M <= 100`이고 한 시간마다 바깥쪽 치즈가 한 겹씩 녹으므로 `T`는 보통 최대 약 `min(N, M) / 2` 수준입니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -1041,3 +1098,18 @@ if fire_time[next_row][next_col] <= next_time:
 | `fire_time` 배열 | 불이 각 칸에 가장 빨리 도착하는 시간을 저장하기 위해 사용 |
 | `fire_time[next] <= next_time` | 불이 같거나 더 빠르게 도착하는 칸을 막기 위해 사용 |
 | `INF` | 불이 도착하지 못한 칸과 아직 방문하지 않은 칸을 구분하기 위해 사용 |
+
+## problem-1840-cheese
+
+### 1840 치즈
+
+문제 파일: [1840_Cheese.py](gold/1840_Cheese.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [바깥 공기 BFS](#note-25-outside-air-bfs) | 내부 구멍과 바깥 공기를 구분해 바깥 공기와 닿은 치즈만 녹이기 위해 사용 |
+| `melt` 리스트 | 같은 시간에 녹을 치즈를 모아두었다가 한꺼번에 녹이기 위해 사용 |
+| `last_cheese_count` | 모두 녹기 한 시간 전에 남아 있던 치즈 칸 수를 출력하기 위해 사용 |
+| `O(TNM)` | `T`번의 시간 동안 매번 최대 `N*M`칸을 BFS로 확인하기 때문 |
