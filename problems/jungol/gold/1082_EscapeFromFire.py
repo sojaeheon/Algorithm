@@ -1,5 +1,5 @@
 # JUNGOL 1082 화염에서탈출
-# 난이도: gold4
+# 난이도: gold2
 # 분류: bfs, queue, simulation
 # 핵심:
 #   불이 먼저 언제 도착하는지 BFS로 계산한다.

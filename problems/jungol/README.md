@@ -109,7 +109,7 @@ monotone_stack
 | [1809 탑](gold/1809_Tower.py) | gold | stack, monotone_stack | 현재 탑보다 낮은 왼쪽 탑을 제거하고, 남은 stack top을 수신 탑으로 사용한다 |
 | [2300 용액](gold/2300_Solution.py) | gold | two_pointer, sorting | 정렬 후 양끝 포인터를 움직이며 합이 0에 가장 가까운 두 값을 찾는다 |
 | [2613 토마토(고)](gold/2613_Tomato.py) | gold | bfs, queue, graph | 처음부터 익은 모든 토마토를 동시에 BFS 시작점으로 넣어 최소 날짜를 구한다 |
-| [1082 화염에서탈출](gold/1082_EscapeFromFire.py) | gold4 | bfs, queue, simulation | 불의 도착 시간을 먼저 계산하고 사람이 불보다 먼저 도착할 수 있는 칸만 이동한다 |
+| [1082 화염에서탈출](gold/1082_EscapeFromFire.py) | gold2 | bfs, queue, simulation | 불의 도착 시간을 먼저 계산하고 사람이 불보다 먼저 도착할 수 있는 칸만 이동한다 |
 | [3706 합이 0이 되는 연속구간 세기](silver/3706_CountZeroSumSubarrays.py) | silver1 | prefix_sum, hash, counter | 같은 누적합이 나온 두 지점 사이의 구간 합이 0이라는 점을 이용한다 |
 | [1357 합이 0이 되는 4개의 숫자들](platinum/1357_FourNumbersSumZero.py) | platinum | meet_in_the_middle, hash, counter | `A+B = -(C+D)`로 나누고, `A+B` 합의 빈도수를 Counter에 저장해 센다 |
 | [1459 숫자고르기](gold/1459_NumberSelection.py) | gold | dfs, graph, cycle | `i -> numbers[i]` 형태의 함수형 그래프로 보고, 시작점으로 다시 돌아오는 숫자를 고른다 |
