@@ -19,18 +19,31 @@ import sys
 # - dp[i]를 2×i 판을 채우는 방법의 수로 정의한다.
 # - 마지막 한 열 또는 마지막 두 열을 어떤 타일로 채웠는지 구분한다.
 # - 작은 N의 값을 직접 그려 초기값과 점화식을 확인한다.
+# - dp[1] = 1, dp[2] = 3
+# - dp[n] = dp[n - 1] + 2 * dp[n - 2]
 
 
 def solution(N):
-    # TODO:
-    # 1) 초기값을 정한다.
-    # 2) 점화식으로 N까지 계산한다.
-    # 3) 매 계산마다 MOD로 나눈다.
-    pass
+    MOD = 20100529
+
+    if N == 1:
+        return 1
+
+    # previous_two = dp[i - 2]
+    # previous_one = dp[i - 1]
+    previous_two = 1
+    previous_one = 3
+
+    for _ in range(3, N + 1):
+        current = (previous_one + 2 * previous_two) % MOD
+        previous_two = previous_one
+        previous_one = current
+
+    return previous_one
 
 
 if __name__ == "__main__":
-    input = sys.stdin.readline
+    input = sys.stdin.buffer.readline
 
     N = int(input())
     print(solution(N))
