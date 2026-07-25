@@ -26,12 +26,35 @@ import sys
 
 
 def solution(N, scores):
-    # TODO: 위 두 경우를 점화식으로 계산한다.
-    pass
+    # 계단 번호를 1부터 쓰기 위해 앞에 0을 붙인다.
+    scores = [0] + scores
+
+    if N == 1:
+        return scores[1]
+
+    if N == 2:
+        return scores[1] + scores[2]
+
+    dp = [0] * (N + 1)
+
+    dp[1] = scores[1]
+    dp[2] = scores[1] + scores[2]
+
+    for stair in range(3, N + 1):
+        # stair번째 계단을 밟는 방법은 두 가지이다.
+        # 1) stair-2에서 두 칸 올라와 stair를 밟는다.
+        # 2) stair-3에서 stair-1을 밟고, stair를 밟는다.
+        #    이 경우 stair-2는 밟지 않으므로 연속 세 계단이 되지 않는다.
+        dp[stair] = max(
+            dp[stair - 2] + scores[stair],
+            dp[stair - 3] + scores[stair - 1] + scores[stair],
+        )
+
+    return dp[N]
 
 
 if __name__ == "__main__":
-    input = sys.stdin.readline
+    input = sys.stdin.buffer.readline
 
     N = int(input())
     scores = [int(input()) for _ in range(N)]
