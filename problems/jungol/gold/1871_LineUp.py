@@ -23,8 +23,16 @@ import sys
 
 
 def solution(N, children):
-    # TODO: children의 LIS 길이를 구해 N에서 뺀다.
-    pass
+    # dp[i]: i번째 아이를 마지막으로 하는 LIS의 최대 길이
+    dp = [1] * N
+
+    for i in range(N):
+        for j in range(i):
+            if children[j] < children[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+
+    lis_length = max(dp)
+    return N - lis_length
 
 
 if __name__ == "__main__":
