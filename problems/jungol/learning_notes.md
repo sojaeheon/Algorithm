@@ -40,6 +40,7 @@
 | 26 | [백트래킹에서 마지막 부분만 검사하기](#note-26-backtracking-suffix-check) | [1027 좋은수열](gold/1027_GoodSequence.py) |
 | 28 | [완전 배낭과 순회 방향](#note-28-unbounded-knapsack-order) | [1077 배낭채우기1](silver/1077_FillKnapsack1.py) |
 | 29 | [LIS와 최소 이동 횟수](#note-29-lis-minimum-moves) | [1871 줄세우기](gold/1871_LineUp.py) |
+| 30 | [LCS 1차원 DP와 diagonal](#note-30-lcs-one-dimensional-dp) | [1220 최장 공통 부분서열](gold/1220_LongestCommonSubsequence.py) |
 
 ### 문제별 메모
 
@@ -65,6 +66,7 @@
 | [1027 좋은수열](#problem-1027-good-sequence) | 백트래킹, 접미부 비교, 사전순 탐색 |
 | [1077 배낭채우기1](#problem-1077-fill-knapsack-1) | 완전 배낭, 1차원 DP, 정방향 용량 순회 |
 | [1871 줄세우기](#problem-1871-line-up) | LIS, 최소 이동 횟수, `N - LIS 길이` |
+| [1220 최장 공통 부분서열](#problem-1220-longest-common-subsequence) | LCS, 1차원 DP, `diagonal` |
 
 ## 주제별 메모
 
@@ -1201,6 +1203,149 @@ dp:   1 2 2 1 3 1 2
 
 가장 큰 값은 3이므로 LIS 길이는 3이고, 옮겨야 하는 최소 인원은 `7 - 3 = 4`이다.
 
+#### 이분 탐색으로 LIS 길이 구하기
+
+이중 반복문 대신, 길이가 같은 증가 부분 수열 중 마지막 값이 가장 작은 상태만 저장하면 LIS 길이를 `O(N log N)`에 구할 수 있다.
+
+```python
+from bisect import bisect_left
+
+lis = []
+
+for child in children:
+    position = bisect_left(lis, child)
+
+    if position == len(lis):
+        lis.append(child)
+    else:
+        lis[position] = child
+```
+
+`bisect_left(lis, child)`는 `child` 이상인 값이 처음 나타나는 위치를 반환한다.
+
+- 그런 위치가 없으면 현재 값은 모든 마지막 값보다 크므로 `lis` 뒤에 추가한다.
+- 그런 위치가 있으면 해당 값을 현재 값으로 교체한다.
+
+예제의 변화 과정은 다음과 같다.
+
+```text
+입력: 3 7 5 2 6 1 4
+
+3 → [3]
+7 → [3, 7]
+5 → [3, 5]
+2 → [2, 5]
+6 → [2, 5, 6]
+1 → [1, 5, 6]
+4 → [1, 4, 6]
+```
+
+`[3, 7]`에서 `7`을 `5`로 교체해도 길이 2라는 사실은 변하지 않는다. 마지막 값이 `5`로 작아지면 이후의 `6`을 붙일 수 있으므로 더 긴 증가 수열을 만들 가능성이 커진다.
+
+```text
+6은 7 뒤에 붙일 수 없다.
+6은 5 뒤에 붙일 수 있다.
+```
+
+이 방식의 `lis` 배열은 여러 증가 부분 수열의 최적 마지막 값을 섞어서 저장하므로 실제 원본 수열에서 선택한 LIS와 일치하지 않을 수 있다. 하지만 `len(lis)`는 항상 정확한 LIS 길이이다.
+
+| 방식 | 시간 복잡도 | 특징 |
+| --- | --- | --- |
+| 이중 반복 DP | `O(N²)` | `dp[i]` 의미와 LIS 원리를 이해하기 쉽다 |
+| 이분 탐색 LIS | `O(N log N)` | 입력이 클 때 효율적이며 길이만 구할 때 적합하다 |
+
+1871번은 `N ≤ 200`이라 두 방식 모두 충분하지만, 코딩테스트 대비를 위해 이분 탐색 방식도 익혀두는 것이 좋다.
+
+## note-30-lcs-one-dimensional-dp
+
+### LCS 1차원 DP와 diagonal
+
+LCS의 기본 2차원 DP 상태는 다음과 같다.
+
+```python
+dp[i][j] = first[:i]와 second[:j]의 LCS 길이
+```
+
+두 현재 문자가 같으면 왼쪽 위 값에 1을 더한다.
+
+```python
+dp[i][j] = dp[i - 1][j - 1] + 1
+```
+
+두 문자가 다르면 위쪽과 왼쪽 값 중 큰 값을 선택한다.
+
+```python
+dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+```
+
+현재 칸을 계산할 때 필요한 값은 왼쪽 위, 위쪽, 왼쪽 세 칸뿐이다. 따라서 모든 행을 저장하지 않고 하나의 배열을 재사용할 수 있다.
+
+| 2차원 DP의 위치 | 1차원 DP에서의 값 |
+| --- | --- |
+| `dp[i-1][j-1]` 왼쪽 위 | `diagonal` |
+| `dp[i-1][j]` 위쪽 | 갱신 전 `dp[j]` |
+| `dp[i][j-1]` 왼쪽 | 이미 갱신된 `dp[j-1]` |
+| `dp[i][j]` 현재 | 새로 계산할 `dp[j]` |
+
+핵심 구현은 다음과 같다.
+
+```python
+for first_character in first:
+    diagonal = 0
+
+    for j, second_character in enumerate(second, start=1):
+        previous_up = dp[j]
+
+        if first_character == second_character:
+            dp[j] = diagonal + 1
+        else:
+            dp[j] = max(dp[j], dp[j - 1])
+
+        diagonal = previous_up
+```
+
+새로운 행이 시작될 때 `diagonal`은 0으로 초기화한다. 첫 번째 열의 왼쪽 위 값은 항상 빈 문자열과 비교한 `dp[i-1][0] = 0`이기 때문이다.
+
+하지만 안쪽 반복문에서도 계속 0인 것은 아니다. 현재 칸의 갱신 전 위쪽 값을 먼저 저장한다.
+
+```python
+previous_up = dp[j]
+```
+
+현재 칸을 계산한 뒤 이 값을 다음 칸의 왼쪽 위 값으로 옮긴다.
+
+```python
+diagonal = previous_up
+```
+
+현재 칸의 위쪽 값은 오른쪽으로 한 칸 이동하면 다음 칸의 왼쪽 위 값이 된다.
+
+```text
+현재 칸에서:        다음 칸에서:
+
+previous_up             previous_up
+     ↑                       ↖
+   현재 칸                 다음 칸
+```
+
+첫 번째 행에서는 기존 `dp`가 모두 0이므로 `previous_up`과 `diagonal`도 계속 0이다. 두 번째 행부터는 이전 행의 결과가 `dp`에 들어 있으므로 안쪽 반복이 진행되면서 `diagonal`이 0이 아닌 값으로 바뀔 수 있다.
+
+예를 들어 `first = "ABC"`, `second = "AC"`에서 `C`를 처리하기 전 배열은 다음과 같다.
+
+```text
+dp = [0, 1, 1]
+```
+
+`C`와 `A`를 비교하는 첫 열에서는 `previous_up = 1`을 저장하고, 계산 후 `diagonal = 1`이 된다. 다음 열에서 `C`와 `C`가 같으므로 다음처럼 계산한다.
+
+```python
+dp[2] = diagonal + 1
+      = 1 + 1
+      = 2
+```
+
+1차원 DP는 다른 점화식이 아니라 2차원 표에서 더 이상 사용하지 않는 행을 버리고 같은 배열을 덮어쓰는 공간 최적화이다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -1495,3 +1640,23 @@ dp:   1 2 2 1 3 1 2
 | `dp[i] = max(dp[i], dp[j] + 1)` | 가능한 앞쪽 증가 수열 중 가장 긴 수열 뒤에 현재 아이를 추가 |
 | `N - max(dp)` | LIS에 속하지 않는 아이들만 옮기면 되므로 최소 이동 인원이 됨 |
 | `O(N²)` | 각 아이마다 앞에 있는 모든 아이를 확인하며, `N ≤ 200`이라 충분함 |
+| `bisect_left` | 각 길이의 증가 부분 수열이 가질 수 있는 최소 마지막 값의 위치를 `O(log N)`에 찾음 |
+| 이분 탐색 LIS | LIS 길이를 시간 `O(N log N)`, 공간 `O(N)`에 계산 |
+
+## problem-1220-longest-common-subsequence
+
+### 1220 최장 공통 부분서열
+
+문제 파일: [1220_LongestCommonSubsequence.py](gold/1220_LongestCommonSubsequence.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [LCS 1차원 DP와 diagonal](#note-30-lcs-one-dimensional-dp) | 2차원 LCS 점화식을 한 행짜리 배열로 최적화하는 원리를 이해하기 위해 정리 |
+| 갱신 전 `dp[j]` | 이전 행의 위쪽 값 `dp[i-1][j]`를 나타냄 |
+| 갱신된 `dp[j-1]` | 현재 행의 왼쪽 값 `dp[i][j-1]`을 나타냄 |
+| `diagonal` | 배열을 덮어쓰기 전에 이전 행의 왼쪽 위 값 `dp[i-1][j-1]`을 보존 |
+| `previous_up` | 현재 위쪽 값을 다음 열의 `diagonal`으로 넘기기 위해 임시 저장 |
+| 짧은 문자열을 열로 사용 | 1차원 배열 크기를 줄여 공간을 `O(min(N, M))`으로 만들기 위해 사용 |
+| `O(NM)` | 두 문자열의 모든 문자 쌍을 한 번씩 비교하기 때문 |

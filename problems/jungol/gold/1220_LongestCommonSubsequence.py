@@ -23,8 +23,27 @@ import sys
 
 
 def solution(first, second):
-    # TODO: LCS 점화식으로 최장 공통 부분서열의 길이를 계산한다.
-    pass
+    # 짧은 문자열을 열로 사용해 DP 배열의 크기를 줄인다.
+    if len(first) < len(second):
+        first, second = second, first
+
+    # dp[j]: 지금까지 확인한 first와 second[:j]의 LCS 길이
+    dp = [0] * (len(second) + 1)
+
+    for first_character in first:
+        diagonal = 0
+
+        for j, second_character in enumerate(second, start=1):
+            previous_up = dp[j]
+
+            if first_character == second_character:
+                dp[j] = diagonal + 1
+            else:
+                dp[j] = max(dp[j], dp[j - 1])
+
+            diagonal = previous_up
+
+    return dp[-1]
 
 
 if __name__ == "__main__":
