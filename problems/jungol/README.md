@@ -18,7 +18,10 @@ JUNGOL 문제 풀이를 정리하는 폴더입니다.
 ```text
 silver/1997_TigerEatingRiceCakes.py
 silver/1370_MeetingRoomAssignment.py
+silver/1411_TilingTwoRows.py
+silver/1520_ClimbingStairs.py
 silver/2581_Budget.py
+silver/2000_CoinChange.py
 gold/1912_MazeSearch.py
 gold/1183_CoinVendingMachine.py
 gold/1809_Tower.py
@@ -103,8 +106,11 @@ monotone_stack
 | --- | --- | --- | --- |
 | [1027 좋은수열](gold/1027_GoodSequence.py) | gold | backtracking, dfs | `1, 2, 3`을 작은 순서로 붙이고 마지막에 생긴 인접 부분 수열만 검사한다 |
 | [1997 떡 먹는 호랑이](silver/1997_TigerEatingRiceCakes.py) | silver | dp, brute_force, fibonacci | D일째 떡 개수를 `x*A + y*B`로 표현하고, A를 대입해 B를 찾는다 |
+| [1411 두 줄로 타일 깔기](silver/1411_TilingTwoRows.py) | silver | dp | `2×N` 판의 마지막 1칸/2칸을 기준으로 `dp[n] = dp[n-1] + 2*dp[n-2]`를 세운다 |
+| [1520 계단 오르기](silver/1520_ClimbingStairs.py) | silver | dp | 마지막 계단을 반드시 밟되, 연속 세 계단을 피하도록 이전 두 경우를 비교한다 |
 | [1370 회의실 배정](silver/1370_MeetingRoomAssignment.py) | silver2 | greedy, sorting | 종료 시간이 빠른 회의부터 선택해 한 회의실에 배정 가능한 회의 수를 최대로 만든다 |
 | [2581 예산](silver/2581_Budget.py) | silver | binary_search, parametric_search | 상한액 `cap`이 가능한지 판단하며 가능한 최대 상한액을 이분 탐색으로 찾는다 |
+| [2000 동전교환](silver/2000_CoinChange.py) | silver | dp, unbounded_knapsack | `dp[money]`에 금액을 만드는 최소 동전 수를 저장하고 마지막에 쓴 동전을 기준으로 갱신한다 |
 | [1912 미로 탐색](gold/1912_MazeSearch.py) | gold4 | graph, dfs, stack, sorting | 인접 방을 번호순으로 정렬하고 stack DFS로 처음 방문한 순서를 구한다 |
 | [1183 동전 자판기](gold/1183_CoinVendingMachine.py) | gold | greedy | 사용하는 동전 수 최대화 문제를 남기는 동전 수 최소화 문제로 바꾼다 |
 | [1809 탑](gold/1809_Tower.py) | gold | stack, monotone_stack | 현재 탑보다 낮은 왼쪽 탑을 제거하고, 남은 stack top을 수신 탑으로 사용한다 |
@@ -184,6 +190,35 @@ monotone_stack
 - 마지막 치즈 수: 각 시간이 시작될 때 `last_cheese_count = cheese_count`로 저장하면, 마지막 반복에서 모두 녹기 한 시간 전 치즈 수가 된다.
 - `T` 의미: `T`는 치즈가 모두 녹는 데 걸리는 시간이다. `N, M <= 100`이라 보통 최대 약 `min(N, M) / 2` 수준이고, 넉넉히 잡아도 100 안쪽으로 볼 수 있다.
 - 복잡도: 매 시간 BFS가 `N*M` 칸을 볼 수 있으므로 시간 `O(TNM)`, 방문 배열과 큐 때문에 공간 `O(NM)`이다.
+
+### 1411 두 줄로 타일 깔기
+
+- 핵심 관찰: `2×N` 판의 오른쪽 끝을 어떻게 채우는지에 따라 이전 상태가 결정된다.
+- DP 정의: `dp[n] = 2×n 판을 채우는 방법의 수`
+- 초기값: `dp[1] = 1`, `dp[2] = 3`
+- 점화식: `dp[n] = dp[n - 1] + 2 * dp[n - 2]`
+- `2 * dp[n - 2]` 이유: 마지막 `2×2`를 채우는 3가지 중 세로 타일 2개는 `dp[n-1]` 쪽에서 이미 세므로, 남은 2가지 경우만 곱한다.
+- MOD 처리: 경우의 수가 매우 커지므로 매 단계에서 `20100529`로 나눈 나머지를 저장한다.
+- 복잡도: 한 번의 반복으로 계산하므로 시간 `O(N)`, 이전 두 값만 저장하면 공간 `O(1)`이다.
+
+### 1520 계단 오르기
+
+- 핵심 관찰: 마지막 계단은 반드시 밟아야 하고, 연속 세 계단은 밟을 수 없다.
+- DP 정의: `dp[i] = i번째 계단을 반드시 밟았을 때 얻을 수 있는 최대 점수`
+- 경우 1: `i-2`번째에서 두 칸 올라와 `i`번째를 밟는다.
+- 경우 2: `i-3`번째에서 `i-1`번째를 밟고, 다시 `i`번째를 밟는다.
+- 점화식: `dp[i] = max(dp[i-2] + score[i], dp[i-3] + score[i-1] + score[i])`
+- 복잡도: 계단을 한 번씩 계산하므로 시간 `O(N)`, DP 배열 때문에 공간 `O(N)`이다.
+
+### 2000 동전교환
+
+- 핵심 관찰: 어떤 금액을 만들 때 마지막에 사용한 동전을 하나 정하면 이전 금액이 결정된다.
+- DP 정의: `dp[money] = money원을 만드는 데 필요한 최소 동전 개수`
+- 초기값: `dp[0] = 0`, 나머지는 만들 수 없다는 뜻으로 `INF`로 둔다.
+- 점화식: `dp[money] = min(dp[money], dp[money - coin] + 1)`
+- 의미: `money - coin`원을 만든 뒤 `coin` 하나를 추가하면 `money`원을 만들 수 있다.
+- 불가능 처리: 마지막에 `dp[W]`가 아직 `INF`이면 `"impossible"`을 출력한다.
+- 복잡도: 목표 금액마다 모든 동전을 확인하므로 시간 `O(NW)`, 금액별 최소 개수 배열 때문에 공간 `O(W)`이다.
 
 ### 2300 용액
 

@@ -33,6 +33,10 @@
 | 23 | [multi-source BFS](#note-23-multi-source-bfs) | [2613 토마토(고)](gold/2613_Tomato.py) |
 | 24 | [불/사람 동시 이동 BFS](#note-24-fire-escape-bfs) | [1082 화염에서탈출](gold/1082_EscapeFromFire.py) |
 | 25 | [바깥 공기 BFS](#note-25-outside-air-bfs) | [1840 치즈](gold/1840_Cheese.py) |
+| 26 | [DP 문제 접근법](#note-26-dp-approach) | [1411 두 줄로 타일 깔기](silver/1411_TilingTwoRows.py), [1520 계단 오르기](silver/1520_ClimbingStairs.py), [2000 동전교환](silver/2000_CoinChange.py) |
+| 27 | [타일링 DP](#note-27-tiling-dp) | [1411 두 줄로 타일 깔기](silver/1411_TilingTwoRows.py) |
+| 28 | [계단 DP](#note-28-stair-dp) | [1520 계단 오르기](silver/1520_ClimbingStairs.py) |
+| 29 | [동전교환 DP](#note-29-coin-change-dp) | [2000 동전교환](silver/2000_CoinChange.py) |
 | 26 | [백트래킹에서 마지막 부분만 검사하기](#note-26-backtracking-suffix-check) | [1027 좋은수열](gold/1027_GoodSequence.py) |
 
 ### 문제별 메모
@@ -53,6 +57,9 @@
 | [2613 토마토(고)](#problem-2613-tomato) | multi-source BFS, 날짜 기록, 불가능 판단 |
 | [1082 화염에서탈출](#problem-1082-escape-from-fire) | 불 BFS, 사람 BFS, 동시 도착 금지 |
 | [1840 치즈](#problem-1840-cheese) | 바깥 공기 BFS, 시뮬레이션, 마지막 치즈 수 |
+| [1411 두 줄로 타일 깔기](#problem-1411-tiling-two-rows) | DP 점화식, MOD 처리, 공간 최적화 |
+| [1520 계단 오르기](#problem-1520-climbing-stairs) | 마지막 계단 기준 DP, 연속 세 계단 제한 |
+| [2000 동전교환](#problem-2000-coin-change) | 최소 동전 수 DP, unbounded knapsack |
 | [1027 좋은수열](#problem-1027-good-sequence) | 백트래킹, 접미부 비교, 사전순 탐색 |
 
 ## 주제별 메모
@@ -913,6 +920,148 @@ for row, col in melt:
 
 `N, M <= 100`이고 한 시간마다 바깥쪽 치즈가 한 겹씩 녹으므로 `T`는 보통 최대 약 `min(N, M) / 2` 수준입니다.
 
+## note-26-dp-approach
+
+### DP 문제 접근법
+
+DP는 큰 문제의 답을 작은 문제의 답으로 만드는 방식입니다.
+
+DP를 의심할 수 있는 표현:
+
+```text
+경우의 수
+최댓값 / 최솟값
+몇 가지 방법
+완전탐색하면 너무 많다
+앞의 결과가 뒤에 영향을 준다
+같은 계산이 반복된다
+```
+
+풀이 순서:
+
+```text
+1. dp[i]의 의미를 문장으로 정확히 정한다.
+2. 작은 값 N=1, 2, 3 정도를 직접 구해본다.
+3. 마지막 선택을 기준으로 경우를 나눈다.
+4. 이전 상태를 이용해 점화식을 만든다.
+5. 초기값을 정한다.
+6. 작은 값부터 큰 값으로 계산한다.
+7. 문제 조건에 따라 MOD, 최댓값, 최솟값, 불가능 처리를 한다.
+```
+
+가장 중요한 것은 `dp[i]`의 의미입니다.
+
+```python
+dp[i] = ?
+```
+
+이 정의가 선명해야 점화식도 선명해집니다.
+
+## note-27-tiling-dp
+
+### 타일링 DP
+
+타일링 문제는 보통 마지막 부분을 어떻게 채우는지 기준으로 점화식을 세웁니다.
+
+1411에서는 이렇게 정의합니다.
+
+```python
+dp[n] = 2 * n 판을 채우는 방법의 수
+```
+
+마지막을 채우는 방법:
+
+```text
+마지막 1칸을 세로 타일로 채우기: dp[n - 1]
+마지막 2칸을 새로운 2가지 방식으로 채우기: 2 * dp[n - 2]
+```
+
+그래서 점화식은:
+
+```python
+dp[n] = dp[n - 1] + 2 * dp[n - 2]
+```
+
+문제에서 나머지를 출력하라고 하면 매 단계에서 MOD를 적용합니다.
+
+```python
+current = (previous_one + 2 * previous_two) % MOD
+```
+
+매번 MOD를 해도 되는 이유:
+
+```text
+(a + b) % MOD = ((a % MOD) + (b % MOD)) % MOD
+```
+
+## note-28-stair-dp
+
+### 계단 DP
+
+계단 오르기 문제는 보통 마지막 계단을 밟는 방법을 기준으로 생각합니다.
+
+1520에서는 마지막 계단을 반드시 밟아야 하고, 연속 세 계단을 밟을 수 없습니다.
+
+DP 정의:
+
+```python
+dp[i] = i번째 계단을 반드시 밟았을 때 얻을 수 있는 최대 점수
+```
+
+`i`번째 계단을 밟는 경우:
+
+```text
+1. i-2번째에서 두 칸 올라온다.
+2. i-3번째에서 i-1번째를 거쳐 i번째로 온다.
+```
+
+점화식:
+
+```python
+dp[i] = max(
+    dp[i - 2] + score[i],
+    dp[i - 3] + score[i - 1] + score[i],
+)
+```
+
+두 번째 경우에서 `i-2`를 건너뛰기 때문에 `i-2, i-1, i`를 모두 밟는 연속 세 계단이 생기지 않습니다.
+
+## note-29-coin-change-dp
+
+### 동전교환 DP
+
+동전교환에서 최소 동전 수를 구할 때는 금액을 DP 상태로 잡습니다.
+
+```python
+dp[money] = money원을 만드는 데 필요한 최소 동전 개수
+```
+
+초기값:
+
+```python
+INF = 10**9
+dp = [INF] * (W + 1)
+dp[0] = 0
+```
+
+`dp[0] = 0`은 0원을 만드는 데 동전이 0개 필요하다는 뜻입니다.
+
+점화식:
+
+```python
+dp[money] = min(dp[money], dp[money - coin] + 1)
+```
+
+의미:
+
+```text
+money - coin원을 만든 뒤 coin 동전 하나를 추가하면 money원을 만들 수 있다.
+```
+
+모든 동전을 무제한 사용할 수 있으므로, 같은 동전을 여러 번 쓰는 갱신이 가능합니다.
+
+만들 수 없는 금액은 끝까지 `INF`로 남습니다.
+
 ## note-26-backtracking-suffix-check
 
 ### 백트래킹에서 마지막 부분만 검사하기
@@ -1155,6 +1304,50 @@ for size in range(1, length // 2 + 1):
 | `melt` 리스트 | 같은 시간에 녹을 치즈를 모아두었다가 한꺼번에 녹이기 위해 사용 |
 | `last_cheese_count` | 모두 녹기 한 시간 전에 남아 있던 치즈 칸 수를 출력하기 위해 사용 |
 | `O(TNM)` | `T`번의 시간 동안 매번 최대 `N*M`칸을 BFS로 확인하기 때문 |
+
+## problem-1411-tiling-two-rows
+
+### 1411 두 줄로 타일 깔기
+
+문제 파일: [1411_TilingTwoRows.py](silver/1411_TilingTwoRows.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [DP 문제 접근법](#note-26-dp-approach) | 경우의 수 문제를 작은 판의 경우의 수로 나누기 위해 사용 |
+| [타일링 DP](#note-27-tiling-dp) | 마지막 1칸/2칸을 기준으로 점화식을 만들기 위해 사용 |
+| MOD 처리 | 경우의 수가 커지므로 매 단계에서 `20100529`로 나눈 나머지를 저장 |
+| 공간 최적화 | `dp[n-1]`, `dp[n-2]`만 필요하므로 변수 2개로 계산 가능 |
+
+## problem-1520-climbing-stairs
+
+### 1520 계단 오르기
+
+문제 파일: [1520_ClimbingStairs.py](silver/1520_ClimbingStairs.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [DP 문제 접근법](#note-26-dp-approach) | 마지막 계단을 밟는 이전 경우를 나누어 최댓값을 구하기 위해 사용 |
+| [계단 DP](#note-28-stair-dp) | 연속 세 계단을 피하면서 마지막 계단을 반드시 밟기 위해 사용 |
+| 작은 N 처리 | `N=1`, `N=2`는 점화식 전에 초기값으로 따로 처리 |
+
+## problem-2000-coin-change
+
+### 2000 동전교환
+
+문제 파일: [2000_CoinChange.py](silver/2000_CoinChange.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [DP 문제 접근법](#note-26-dp-approach) | 금액별 최소 동전 개수를 작은 금액의 답으로 만들기 위해 사용 |
+| [동전교환 DP](#note-29-coin-change-dp) | 마지막에 사용한 동전 하나를 기준으로 `dp[money]`를 갱신하기 위해 사용 |
+| `INF` 초기화 | 만들 수 없는 금액을 구분하고 최솟값 갱신을 하기 위해 사용 |
+| `"impossible"` 처리 | 목표 금액이 끝까지 `INF`이면 만들 수 없다는 뜻 |
 
 ## problem-1027-good-sequence
 

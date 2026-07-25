@@ -25,15 +25,27 @@ import sys
 
 
 def solution(N, coins, W):
-    # TODO:
-    # 1) dp[0] = 0으로 시작한다.
-    # 2) 각 금액의 최소 동전 수를 갱신한다.
-    # 3) W를 만들 수 없다면 "impossible"을 반환한다.
-    pass
+    INF = 10**9
+
+    # dp[money] = money원을 만들 때 필요한 최소 동전 개수
+    dp = [INF] * (W + 1)
+    dp[0] = 0
+
+    for money in range(1, W + 1):
+        for coin in coins:
+            if money < coin:
+                continue
+
+            dp[money] = min(dp[money], dp[money - coin] + 1)
+
+    if dp[W] == INF:
+        return "impossible"
+
+    return dp[W]
 
 
 if __name__ == "__main__":
-    input = sys.stdin.readline
+    input = sys.stdin.buffer.readline
 
     N = int(input())
     coins = list(map(int, input().split()))
