@@ -24,13 +24,42 @@ import sys
 
 
 def solution(N, M, heights):
-    # TODO: DFS + 메모이제이션으로 경로 수를 계산한다.
-    pass
+    # -1은 아직 계산하지 않은 칸을 의미한다.
+    # 0은 계산했지만 도착점으로 가는 경로가 없는 칸이다.
+    memo = [[-1] * M for _ in range(N)]
+    directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
+
+    def dfs(row, col):
+        # 도착점에 도달했으므로 경로 하나를 완성했다.
+        if row == N - 1 and col == M - 1:
+            return 1
+
+        if memo[row][col] != -1:
+            return memo[row][col]
+
+        memo[row][col] = 0
+
+        for row_change, col_change in directions:
+            next_row = row + row_change
+            next_col = col + col_change
+
+            if not (0 <= next_row < N and 0 <= next_col < M):
+                continue
+
+            if heights[next_row][next_col] < heights[row][col]:
+                memo[row][col] += dfs(next_row, next_col)
+
+        return memo[row][col]
+
+    return dfs(0, 0)
 
 
 if __name__ == "__main__":
     input = sys.stdin.readline
-    sys.setrecursionlimit(1_000_000)
+    # 높이는 10,000 이하이고 이동할 때마다 엄격히 낮아지므로
+    # 한 경로의 재귀 깊이는 최대 10,000이다.
+    # 지나치게 큰 값은 64MB 환경에서 메모리 초과를 일으킬 수 있다.
+    sys.setrecursionlimit(12_000)
 
     N, M = map(int, input().split())
     heights = [list(map(int, input().split())) for _ in range(N)]
