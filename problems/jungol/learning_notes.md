@@ -38,6 +38,7 @@
 | 28 | [계단 DP](#note-28-stair-dp) | [1520 계단 오르기](silver/1520_ClimbingStairs.py) |
 | 29 | [동전교환 DP](#note-29-coin-change-dp) | [2000 동전교환](silver/2000_CoinChange.py) |
 | 26 | [백트래킹에서 마지막 부분만 검사하기](#note-26-backtracking-suffix-check) | [1027 좋은수열](gold/1027_GoodSequence.py) |
+| 28 | [완전 배낭과 순회 방향](#note-28-unbounded-knapsack-order) | [1077 배낭채우기1](silver/1077_FillKnapsack1.py) |
 
 ### 문제별 메모
 
@@ -61,6 +62,7 @@
 | [1520 계단 오르기](#problem-1520-climbing-stairs) | 마지막 계단 기준 DP, 연속 세 계단 제한 |
 | [2000 동전교환](#problem-2000-coin-change) | 최소 동전 수 DP, unbounded knapsack |
 | [1027 좋은수열](#problem-1027-good-sequence) | 백트래킹, 접미부 비교, 사전순 탐색 |
+| [1077 배낭채우기1](#problem-1077-fill-knapsack-1) | 완전 배낭, 1차원 DP, 정방향 용량 순회 |
 
 ## 주제별 메모
 
@@ -1102,6 +1104,50 @@ for size in range(1, length // 2 + 1):
 
 또한 답이 가장 작은 수열이어야 할 때 후보를 `1`, `2`, `3` 순서로 탐색하면 DFS에서 처음 완성된 답이 곧 최솟값이다. 이처럼 탐색 순서를 정답의 정렬 순서와 맞추면 모든 정답을 저장해서 비교할 필요가 없다.
 
+## note-28-unbounded-knapsack-order
+
+### 완전 배낭과 순회 방향
+
+완전 배낭은 각 물건을 원하는 만큼 반복해서 사용할 수 있는 배낭 문제이다.
+
+1077 배낭채우기1에서는 다음과 같이 DP를 정의한다.
+
+```python
+dp[capacity] = capacity 이하에서 얻을 수 있는 최대 값어치
+```
+
+무게가 `weight`, 값어치가 `value`인 보석을 현재 용량에 하나 추가하는 점화식은 다음과 같다.
+
+```python
+dp[current_weight] = max(
+    dp[current_weight],
+    dp[current_weight - weight] + value,
+)
+```
+
+첫 번째 값은 현재 보석을 담지 않는 경우이고, 두 번째 값은 현재 보석을 하나 더 담는 경우이다.
+
+완전 배낭에서는 용량을 작은 값부터 큰 값으로 순회한다.
+
+```python
+for current_weight in range(weight, W + 1):
+```
+
+예를 들어 무게 2, 값어치 40인 보석을 처리하면 다음과 같이 현재 보석으로 갱신한 값을 다시 사용한다.
+
+```text
+dp[2] = dp[0] + 40 = 40
+dp[4] = dp[2] + 40 = 80
+dp[6] = dp[4] + 40 = 120
+```
+
+순회 방향에 따른 차이는 다음과 같다.
+
+| 문제 종류 | 용량 순회 | 의미 |
+| --- | --- | --- |
+| 완전 배낭 | 작은 값 → 큰 값 | 갱신된 값을 재사용하여 같은 물건을 여러 번 사용 |
+| 0/1 배낭 | 큰 값 → 작은 값 | 같은 반복의 갱신 값을 사용하지 않아 물건을 한 번만 사용 |
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -1363,3 +1409,19 @@ for size in range(1, length // 2 + 1):
 | `1 → 2 → 3` 순서의 DFS | 처음 완성된 좋은 수열이 숫자로 보았을 때 가장 작은 수열이 되도록 하기 위해 사용 |
 | `sequence.append()`와 `sequence.pop()` | 후보 숫자를 선택하고, 실패하면 선택 전 상태로 되돌리기 위해 사용 |
 | 성공 여부를 반환하는 DFS | 정답을 찾은 뒤 남은 탐색을 즉시 중단하기 위해 사용 |
+
+## problem-1077-fill-knapsack-1
+
+### 1077 배낭채우기1
+
+문제 파일: [1077_FillKnapsack1.py](silver/1077_FillKnapsack1.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [완전 배낭과 순회 방향](#note-28-unbounded-knapsack-order) | 각 보석을 무제한 사용할 수 있으므로 현재 보석으로 갱신한 값을 다시 사용해야 함 |
+| `dp[capacity]` | 해당 용량 이하에서 얻을 수 있는 최대 값어치를 저장 |
+| `dp[current_weight - weight] + value` | 현재 보석을 하나 더 담았을 때의 값어치를 계산 |
+| 정방향 용량 순회 | 같은 보석을 두 번 이상 담는 상태를 만들기 위해 사용 |
+| `O(NW)` | 모든 보석에 대해 담을 수 있는 각 용량을 한 번씩 확인하기 때문 |

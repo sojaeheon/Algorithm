@@ -26,8 +26,17 @@ import sys
 
 
 def solution(N, W, jewels):
-    # TODO: 완전 배낭 점화식으로 최대 값어치를 계산한다.
-    pass
+    dp = [0] * (W + 1)
+
+    for weight, value in jewels:
+        # 정방향으로 순회하면 같은 보석을 여러 번 사용할 수 있다.
+        for current_weight in range(weight, W + 1):
+            dp[current_weight] = max(
+                dp[current_weight],
+                dp[current_weight - weight] + value,
+            )
+
+    return dp[W]
 
 
 if __name__ == "__main__":

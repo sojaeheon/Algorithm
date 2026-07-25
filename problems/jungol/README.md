@@ -104,6 +104,7 @@ monotone_stack
 
 | 문제 | 난이도 | 분류 | 핵심 |
 | --- | --- | --- | --- |
+| [1077 배낭채우기1](silver/1077_FillKnapsack1.py) | silver | dp, unbounded_knapsack | 용량을 작은 값부터 갱신해 같은 보석을 무제한으로 사용하는 완전 배낭 문제를 푼다 |
 | [1027 좋은수열](gold/1027_GoodSequence.py) | gold | backtracking, dfs | `1, 2, 3`을 작은 순서로 붙이고 마지막에 생긴 인접 부분 수열만 검사한다 |
 | [1997 떡 먹는 호랑이](silver/1997_TigerEatingRiceCakes.py) | silver | dp, brute_force, fibonacci | D일째 떡 개수를 `x*A + y*B`로 표현하고, A를 대입해 B를 찾는다 |
 | [1411 두 줄로 타일 깔기](silver/1411_TilingTwoRows.py) | silver | dp | `2×N` 판의 마지막 1칸/2칸을 기준으로 `dp[n] = dp[n-1] + 2*dp[n-2]`를 세운다 |
@@ -129,6 +130,18 @@ monotone_stack
 | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) | platinum5 | bitmask, dp, graph, tsp | 방문 상태를 비트마스크로 표현하고 `dp[mask][current]`로 최소 비용을 저장한다 |
 
 ## 오늘 푼 문제
+
+### 1077 배낭채우기1
+
+- 문제 목표: 각 보석을 무제한으로 사용할 수 있을 때, 무게가 배낭 용량 `W`를 넘지 않도록 담아 얻는 최대 값어치를 구한다.
+- DP 정의: `dp[capacity]`는 용량이 `capacity` 이하인 배낭에서 얻을 수 있는 최대 값어치이다.
+- 담지 않는 경우: 기존 값인 `dp[current_weight]`를 유지한다.
+- 하나 더 담는 경우: `dp[current_weight - weight] + value`이다.
+- 점화식: `dp[current_weight] = max(dp[current_weight], dp[current_weight - weight] + value)`이다.
+- 순회 방향: 용량을 `weight`부터 `W`까지 정방향으로 확인한다. 현재 보석으로 앞에서 갱신한 값을 뒤에서 다시 사용할 수 있으므로 같은 보석을 여러 번 담을 수 있다.
+- 0/1 배낭과 차이: 물건을 한 번만 사용할 수 있다면 같은 물건의 갱신 값을 재사용하지 않도록 용량을 역방향으로 확인한다.
+- 정답: `dp[W]`에 용량 `W` 이하에서 얻을 수 있는 최대 값어치가 저장된다.
+- 복잡도: 시간 `O(NW)`, 공간 `O(W)`이다.
 
 ### 1027 좋은수열
 
