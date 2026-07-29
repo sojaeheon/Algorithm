@@ -104,7 +104,7 @@ monotone_stack
 
 | 문제 | 난이도 | 분류 | 핵심 |
 | --- | --- | --- | --- |
-| [3865 Ski Course Rating](gold/3865_SkiCourseRating.py) | gold | kruskal, union_find, offline_query | 높이 차가 작은 간선부터 컴포넌트를 합쳐 각 시작점이 `T`개 칸에 도달하는 최소 난이도를 결정한다 |
+| [3865 Ski Course Rating](platinum/3865_SkiCourseRating.py) | platinum1 | kruskal, union_find, offline_query | 높이 차가 작은 간선부터 컴포넌트를 합쳐 각 시작점이 `T`개 칸에 도달하는 최소 난이도를 결정한다 |
 | [3924 Superbull](gold/3924_Superbull.py) | gold | graph, mst, prim, maximum_spanning_tree | XOR로 간선 비용을 계산하는 완전 그래프에서 배열 기반 Prim으로 최대 신장 트리를 구한다 |
 | [1024 내리막 길](gold/1024_DownhillPath.py) | gold | dfs, dp, memoization | 현재 칸에서 도착점까지 가는 경로 수를 DFS로 계산하고 칸별 결과를 재사용한다 |
 | [1220 최장 공통 부분서열](gold/1220_LongestCommonSubsequence.py) | gold | dp, string, lcs | 2차원 LCS 점화식에서 필요한 이전 행만 1차원 배열에 저장한다 |
@@ -135,6 +135,21 @@ monotone_stack
 | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) | platinum5 | bitmask, dp, graph, tsp | 방문 상태를 비트마스크로 표현하고 `dp[mask][current]`로 최소 비용을 저장한다 |
 
 ## 오늘 푼 문제
+
+### 3865 Ski Course Rating
+
+- 문제 목표: 각 출발점에서 상하좌우로 최소 `T`개 칸에 도달할 수 있게 하는 최소 허용 높이 차를 구하고 모두 더한다.
+- 그래프 모델링: 격자 칸을 정점, 인접한 두 칸을 간선, 두 칸의 높이 차를 간선 가중치로 본다.
+- 핵심 관찰: 가중치가 `D` 이하인 간선으로 연결된 컴포넌트는 난이도 `D`로 서로 이동할 수 있는 칸들의 집합이다.
+- 접근 방향: 간선을 높이 차 오름차순으로 처리하는 크루스칼과 Union-Find를 사용한다.
+- 난이도 확정: 시작점이 속한 컴포넌트 크기가 처음 `T` 이상이 되는 간선 가중치가 그 시작점의 최소 난이도이다.
+- 간선 생성: 무방향 간선 중복을 피하기 위해 각 칸에서 오른쪽과 아래쪽 간선만 만든다.
+- 좌표 변환: `(row, col)`을 `row * N + col`로 바꿔 Union-Find의 1차원 인덱스로 사용한다.
+- `size[root]`: 현재 컴포넌트에 포함된 칸 수이다.
+- `pending_starts[root]`: 현재 컴포넌트에서 아직 난이도가 확정되지 않은 시작점 수이다.
+- 중복 방지: 컴포넌트 크기가 `T` 이상이면 `cost * pending_starts[root]`를 답에 더한 뒤 값을 `0`으로 만든다.
+- 예외 처리: `T == 1`이면 출발한 칸 하나로 조건을 만족하므로 모든 시작점의 난이도는 `0`이다.
+- 복잡도: 간선이 약 `2MN`개이므로 시간 `O(MN log(MN))`, 공간 `O(MN)`이다.
 
 ### 1024 내리막 길
 

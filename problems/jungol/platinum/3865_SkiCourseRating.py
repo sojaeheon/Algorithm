@@ -1,6 +1,6 @@
 # JUNGOL 3865 Ski Course Rating
 # 문제: https://jungol.co.kr/problem/3865
-# 난이도: gold
+# 난이도: platinum1
 # 분류: graph, kruskal, union_find, offline_query
 # 핵심:
 #   높이 차가 작은 인접 간선부터 처리하면서 컴포넌트를 합친다.

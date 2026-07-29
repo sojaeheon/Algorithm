@@ -42,6 +42,7 @@
 | 29 | [LIS와 최소 이동 횟수](#note-29-lis-minimum-moves) | [1871 줄세우기](gold/1871_LineUp.py) |
 | 30 | [LCS 1차원 DP와 diagonal](#note-30-lcs-one-dimensional-dp) | [1220 최장 공통 부분서열](gold/1220_LongestCommonSubsequence.py) |
 | 31 | [DFS 메모이제이션과 재귀 제한](#note-31-dfs-memoization-recursion-limit) | [1024 내리막 길](gold/1024_DownhillPath.py) |
+| 32 | [크루스칼 임계값과 컴포넌트 메타데이터](#note-32-kruskal-threshold-component-metadata) | [3865 Ski Course Rating](platinum/3865_SkiCourseRating.py) |
 
 ### 문제별 메모
 
@@ -69,6 +70,7 @@
 | [1871 줄세우기](#problem-1871-line-up) | LIS, 최소 이동 횟수, `N - LIS 길이` |
 | [1220 최장 공통 부분서열](#problem-1220-longest-common-subsequence) | LCS, 1차원 DP, `diagonal` |
 | [1024 내리막 길](#problem-1024-downhill-path) | DFS, 메모이제이션, Top-down DP, 재귀 제한 |
+| [3865 Ski Course Rating](#problem-3865-ski-course-rating) | 크루스칼, Union-Find, 임계값, 컴포넌트별 미처리 시작점 수 |
 
 ## 주제별 메모
 
@@ -1430,6 +1432,100 @@ dp[next_row][next_col] += dp[row][col]
 
 프로그래머스에서도 `sys` 표준 라이브러리로 재귀 제한을 조정할 수 있지만, 코딩테스트에서는 문제마다 입력 제한을 확인해 값을 정해야 한다.
 
+## note-32-kruskal-threshold-component-metadata
+
+### 크루스칼 임계값과 컴포넌트 메타데이터
+
+3865번은 MST의 전체 비용을 구하는 문제가 아니지만 크루스칼의 핵심 원리를 사용한다. 간선을 가중치 오름차순으로 처리하면 현재까지 합친 컴포넌트는 **현재 가중치 이하의 간선만 사용해서 서로 이동할 수 있는 정점 집합**이 된다.
+
+두 인접 칸의 높이가 각각 `10`, `16`이라면 두 칸 사이 간선 가중치는 `6`이다.
+
+```python
+cost = abs(10 - 16)
+```
+
+난이도 `D`에서는 높이 차가 `D` 이하인 간선만 건널 수 있으므로, 가중치가 작은 간선부터 합치는 과정은 가능한 난이도를 작은 값부터 올리는 과정과 같다.
+
+#### 컴포넌트 크기와 최소 난이도
+
+시작점이 포함된 컴포넌트 크기가 처음 `T` 이상이 된 순간을 생각한다.
+
+```python
+if size[root] >= T:
+    difficulty = current_cost
+```
+
+현재 가중치가 `current_cost`이므로 이 컴포넌트의 모든 칸은 높이 차가 `current_cost` 이하인 간선으로 연결되어 있다. 따라서 컴포넌트 안의 시작점은 최소 `T`개 칸에 도달할 수 있다.
+
+그보다 작은 가중치까지 처리했을 때는 컴포넌트 크기가 `T`보다 작았으므로 `T`개 칸에 도달할 수 없었다. 따라서 `current_cost`가 가능한 값일 뿐 아니라 **최소값**이다.
+
+#### 컴포넌트에 추가 정보 저장하기
+
+일반적인 Union-Find는 `parent`, `size`만 관리하지만, 컴포넌트별 합이나 개수 같은 정보도 대표 정점에 저장할 수 있다.
+
+```python
+parent = list(range(cell_count))
+size = [1] * cell_count
+pending_starts = [...]
+```
+
+두 컴포넌트를 합칠 때 대표 정점에 정보를 함께 합친다.
+
+```python
+parent[root_second] = root_first
+size[root_first] += size[root_second]
+pending_starts[root_first] += pending_starts[root_second]
+```
+
+`pending_starts[root]`는 해당 컴포넌트에서 아직 난이도가 확정되지 않은 시작점 수이다. 컴포넌트 크기가 `T` 이상이 되면 그 시작점들은 모두 같은 현재 가중치로 처리할 수 있다.
+
+```python
+answer += current_cost * pending_starts[root]
+pending_starts[root] = 0
+```
+
+처리 후 `0`으로 만드는 이유는 더 큰 컴포넌트와 합쳐졌을 때 이미 답을 구한 시작점을 다시 계산하지 않기 위해서이다.
+
+#### 왜 오른쪽과 아래쪽 간선만 만드는가
+
+격자의 간선은 무방향이다. 현재 칸에서 오른쪽 간선을 만들면 오른쪽 칸에서 현재 칸으로 오는 왼쪽 간선과 동일하다. 모든 칸에서 오른쪽과 아래쪽만 확인해도 모든 인접 관계가 정확히 한 번씩 만들어진다.
+
+```python
+right = current + 1
+down = current + N
+```
+
+네 방향을 모두 만들면 정답은 같지만 간선 수와 정렬 비용, 메모리 사용량이 약 두 배로 증가한다.
+
+#### 2차원 좌표를 1차원 번호로 변환하기
+
+열이 `N`개일 때 `(row, col)` 앞에는 완성된 행 `row`개, 즉 `row * N`개의 칸이 있다. 여기에 현재 열 번호를 더한다.
+
+```python
+current = row * N + col
+```
+
+반대로 정점 번호를 좌표로 되돌릴 수 있다.
+
+```python
+row = current // N
+col = current % N
+```
+
+이 변환을 사용하면 `M * N` 크기의 1차원 Union-Find 배열로 격자를 관리할 수 있다.
+
+#### 복잡도
+
+`M × N` 격자의 인접 간선은 다음 개수이다.
+
+```text
+가로 간선: M(N - 1)
+세로 간선: (M - 1)N
+전체: 2MN - M - N = O(MN)
+```
+
+간선 정렬이 `O(MN log(MN))`이고 Union-Find 연산은 전체적으로 거의 `O(MN)`이다. 따라서 총 시간 복잡도는 `O(MN log(MN))`, 공간 복잡도는 `O(MN)`이다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -1763,3 +1859,22 @@ dp[next_row][next_col] += dp[row][col]
 | `sys.setrecursionlimit(12_000)` | 최대 높이 10,000에서 가능한 재귀 깊이에 필요한 정도의 여유만 설정 |
 | 위상정렬 DP | 재귀를 사용하기 어려운 환경에서 높은 칸부터 낮은 칸으로 경로 수를 전달하는 대안 |
 | `O(NM)` | 각 칸과 상하좌우 네 방향을 최대 한 번씩 계산하기 때문 |
+
+## problem-3865-ski-course-rating
+
+### 3865 Ski Course Rating
+
+문제 파일: [3865_SkiCourseRating.py](platinum/3865_SkiCourseRating.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [크루스칼 임계값과 컴포넌트 메타데이터](#note-32-kruskal-threshold-component-metadata) | 간선 가중치를 난이도 임계값으로 보고 컴포넌트가 `T`칸이 되는 최소 시점을 찾기 위해 사용 |
+| 오른쪽·아래쪽 간선만 생성 | 무방향 격자 간선을 중복 없이 한 번씩 만들기 위해 사용 |
+| `row * N + col` | 2차원 격자 칸을 Union-Find의 1차원 정점 번호로 변환 |
+| `size[root]` | 현재 컴포넌트에서 도달 가능한 칸 수를 관리 |
+| `pending_starts[root]` | 아직 난이도가 확정되지 않은 시작점 수를 컴포넌트별로 관리 |
+| `pending_starts[root] = 0` | 이미 처리한 시작점이 이후 병합에서 중복 계산되는 것을 방지 |
+| `T == 1` | 시작한 칸만으로 조건을 만족하므로 난이도 합이 `0` |
+| `O(MN log(MN))` | 약 `2MN`개의 인접 간선을 정렬한 뒤 Union-Find로 처리 |
