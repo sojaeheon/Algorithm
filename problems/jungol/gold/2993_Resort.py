@@ -28,8 +28,38 @@ import sys
 
 
 def solution(N, M, closed_days):
-    # TODO: 날짜와 쿠폰 수를 상태로 최소 비용을 계산한다.
-    pass
+    memo = {}
+
+    def dfs(day, coupons):
+        if day > N:
+            return 0
+
+        state = (day, coupons)
+
+        if state in memo:
+            return memo[state]
+
+        # 리조트에 가지 않는 날에는 이용권이나 쿠폰이 필요 없다.
+        if day in closed_days:
+            memo[state] = dfs(day + 1, coupons)
+            return memo[state]
+
+        minimum_cost = min(
+            10_000 + dfs(day + 1, coupons),
+            25_000 + dfs(day + 3, coupons + 1),
+            37_000 + dfs(day + 5, coupons + 2),
+        )
+
+        if coupons >= 3:
+            minimum_cost = min(
+                minimum_cost,
+                dfs(day + 1, coupons - 3),
+            )
+
+        memo[state] = minimum_cost
+        return memo[state]
+
+    return dfs(1, 0)
 
 
 if __name__ == "__main__":

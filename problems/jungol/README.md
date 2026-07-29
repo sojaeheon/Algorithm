@@ -104,6 +104,8 @@ monotone_stack
 
 | 문제 | 난이도 | 분류 | 핵심 |
 | --- | --- | --- | --- |
+| [3865 Ski Course Rating](gold/3865_SkiCourseRating.py) | gold | kruskal, union_find, offline_query | 높이 차가 작은 간선부터 컴포넌트를 합쳐 각 시작점이 `T`개 칸에 도달하는 최소 난이도를 결정한다 |
+| [3924 Superbull](gold/3924_Superbull.py) | gold | graph, mst, prim, maximum_spanning_tree | XOR로 간선 비용을 계산하는 완전 그래프에서 배열 기반 Prim으로 최대 신장 트리를 구한다 |
 | [1024 내리막 길](gold/1024_DownhillPath.py) | gold | dfs, dp, memoization | 현재 칸에서 도착점까지 가는 경로 수를 DFS로 계산하고 칸별 결과를 재사용한다 |
 | [1220 최장 공통 부분서열](gold/1220_LongestCommonSubsequence.py) | gold | dp, string, lcs | 2차원 LCS 점화식에서 필요한 이전 행만 1차원 배열에 저장한다 |
 | [1871 줄세우기](gold/1871_LineUp.py) | gold | dp, lis | 현재 순서를 유지할 수 있는 가장 긴 증가 부분 수열을 남기고 나머지 아이들만 옮긴다 |
