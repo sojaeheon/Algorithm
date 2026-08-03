@@ -37,6 +37,7 @@
 | 27 | [타일링 DP](#note-27-tiling-dp) | [1411 두 줄로 타일 깔기](silver/1411_TilingTwoRows.py) |
 | 28 | [계단 DP](#note-28-stair-dp) | [1520 계단 오르기](silver/1520_ClimbingStairs.py) |
 | 29 | [동전교환 DP](#note-29-coin-change-dp) | [2000 동전교환](silver/2000_CoinChange.py) |
+| 30 | [Union-Find](#note-30-union-find) | [1863 종교](gold/1863_Religion.py) |
 | 26 | [백트래킹에서 마지막 부분만 검사하기](#note-26-backtracking-suffix-check) | [1027 좋은수열](gold/1027_GoodSequence.py) |
 | 28 | [완전 배낭과 순회 방향](#note-28-unbounded-knapsack-order) | [1077 배낭채우기1](silver/1077_FillKnapsack1.py) |
 | 29 | [LIS와 최소 이동 횟수](#note-29-lis-minimum-moves) | [1871 줄세우기](gold/1871_LineUp.py) |
@@ -65,6 +66,7 @@
 | [1411 두 줄로 타일 깔기](#problem-1411-tiling-two-rows) | DP 점화식, MOD 처리, 공간 최적화 |
 | [1520 계단 오르기](#problem-1520-climbing-stairs) | 마지막 계단 기준 DP, 연속 세 계단 제한 |
 | [2000 동전교환](#problem-2000-coin-change) | 최소 동전 수 DP, unbounded knapsack |
+| [1863 종교](#problem-1863-religion) | Union-Find, 경로 압축, union by size |
 | [1027 좋은수열](#problem-1027-good-sequence) | 백트래킹, 접미부 비교, 사전순 탐색 |
 | [1077 배낭채우기1](#problem-1077-fill-knapsack-1) | 완전 배낭, 1차원 DP, 정방향 용량 순회 |
 | [1871 줄세우기](#problem-1871-line-up) | LIS, 최소 이동 횟수, `N - LIS 길이` |
@@ -1072,6 +1074,73 @@ money - coin원을 만든 뒤 coin 동전 하나를 추가하면 money원을 만
 
 만들 수 없는 금액은 끝까지 `INF`로 남습니다.
 
+## note-30-union-find
+
+### Union-Find
+
+Union-Find는 여러 원소를 서로 겹치지 않는 집합으로 관리하는 자료구조입니다.
+
+주로 필요한 연산은 두 가지입니다.
+
+```text
+find(x): x가 속한 집합의 대표 찾기
+union(a, b): a와 b가 속한 두 집합 합치기
+```
+
+기본 배열:
+
+```python
+parent = list(range(N + 1))
+size = [1] * (N + 1)
+```
+
+처음에는 모든 원소가 자기 자신을 대표로 갖습니다.
+
+```text
+parent[1] = 1
+parent[2] = 2
+parent[3] = 3
+```
+
+`find`는 대표를 찾습니다.
+
+```python
+def find(x):
+    while x != parent[x]:
+        parent[x] = parent[parent[x]]
+        x = parent[x]
+    return x
+```
+
+`parent[x] = parent[parent[x]]`는 경로 압축입니다. 중간 노드가 더 위의 대표 쪽을 바로 가리키게 해서 다음 탐색을 빠르게 만듭니다.
+
+`union`은 두 집합을 합칩니다.
+
+```python
+def union(a, b):
+    root_a = find(a)
+    root_b = find(b)
+
+    if root_a == root_b:
+        return
+
+    if size[root_a] < size[root_b]:
+        root_a, root_b = root_b, root_a
+
+    parent[root_b] = root_a
+    size[root_a] += size[root_b]
+```
+
+`size`가 작은 집합을 큰 집합 아래에 붙이면 트리가 깊어지는 것을 줄일 수 있습니다.
+
+1863에서는 처음 집합 수를 `N`으로 두고, 서로 다른 두 집합을 합칠 때마다 1 줄입니다.
+
+```python
+group_count = N
+```
+
+모든 같은 종교 쌍을 처리한 뒤 남은 `group_count`가 가능한 종교의 최대 가짓수입니다.
+
 ## note-26-backtracking-suffix-check
 
 ### 백트래킹에서 마지막 부분만 검사하기
@@ -1772,6 +1841,21 @@ col = current % N
 | [동전교환 DP](#note-29-coin-change-dp) | 마지막에 사용한 동전 하나를 기준으로 `dp[money]`를 갱신하기 위해 사용 |
 | `INF` 초기화 | 만들 수 없는 금액을 구분하고 최솟값 갱신을 하기 위해 사용 |
 | `"impossible"` 처리 | 목표 금액이 끝까지 `INF`이면 만들 수 없다는 뜻 |
+
+## problem-1863-religion
+
+### 1863 종교
+
+문제 파일: [1863_Religion.py](gold/1863_Religion.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [Union-Find](#note-30-union-find) | 같은 종교인 학생들을 하나의 집합으로 합치기 위해 사용 |
+| 경로 압축 | `find`를 반복해도 빠르게 대표를 찾기 위해 사용 |
+| union by size | 작은 집합을 큰 집합에 붙여 트리 깊이를 줄이기 위해 사용 |
+| `group_count` | 대표를 마지막에 다시 세지 않고 union 성공 시마다 집합 수를 바로 줄이기 위해 사용 |
 
 ## problem-1027-good-sequence
 

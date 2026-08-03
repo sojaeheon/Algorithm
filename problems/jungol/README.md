@@ -20,6 +20,7 @@ silver/1997_TigerEatingRiceCakes.py
 silver/1370_MeetingRoomAssignment.py
 silver/1411_TilingTwoRows.py
 silver/1520_ClimbingStairs.py
+gold/1863_Religion.py
 silver/2581_Budget.py
 silver/2000_CoinChange.py
 gold/1912_MazeSearch.py
@@ -114,6 +115,7 @@ monotone_stack
 | [1997 떡 먹는 호랑이](silver/1997_TigerEatingRiceCakes.py) | silver | dp, brute_force, fibonacci | D일째 떡 개수를 `x*A + y*B`로 표현하고, A를 대입해 B를 찾는다 |
 | [1411 두 줄로 타일 깔기](silver/1411_TilingTwoRows.py) | silver | dp | `2×N` 판의 마지막 1칸/2칸을 기준으로 `dp[n] = dp[n-1] + 2*dp[n-2]`를 세운다 |
 | [1520 계단 오르기](silver/1520_ClimbingStairs.py) | silver | dp | 마지막 계단을 반드시 밟되, 연속 세 계단을 피하도록 이전 두 경우를 비교한다 |
+| [1863 종교](gold/1863_Religion.py) | gold5 | graph, disjoint_set, union_find | 같은 종교인 학생들을 union하고 마지막에 남은 집합 수를 센다 |
 | [1370 회의실 배정](silver/1370_MeetingRoomAssignment.py) | silver2 | greedy, sorting | 종료 시간이 빠른 회의부터 선택해 한 회의실에 배정 가능한 회의 수를 최대로 만든다 |
 | [2581 예산](silver/2581_Budget.py) | silver | binary_search, parametric_search | 상한액 `cap`이 가능한지 판단하며 가능한 최대 상한액을 이분 탐색으로 찾는다 |
 | [2000 동전교환](silver/2000_CoinChange.py) | silver | dp, unbounded_knapsack | `dp[money]`에 금액을 만드는 최소 동전 수를 저장하고 마지막에 쓴 동전을 기준으로 갱신한다 |
@@ -299,6 +301,16 @@ monotone_stack
 - 의미: `money - coin`원을 만든 뒤 `coin` 하나를 추가하면 `money`원을 만들 수 있다.
 - 불가능 처리: 마지막에 `dp[W]`가 아직 `INF`이면 `"impossible"`을 출력한다.
 - 복잡도: 목표 금액마다 모든 동전을 확인하므로 시간 `O(NW)`, 금액별 최소 개수 배열 때문에 공간 `O(W)`이다.
+
+### 1863 종교
+
+- 핵심 관찰: 같은 종교라고 알려진 두 학생은 반드시 같은 집합에 속해야 한다.
+- 접근 방향: 처음에는 학생마다 서로 다른 종교라고 보고, 같은 종교 쌍이 나올 때마다 두 집합을 합친다.
+- 자료구조: 서로소 집합(Union-Find)을 사용한다.
+- `find`: 학생이 속한 집합의 대표를 찾는다. 경로 압축으로 다음 탐색을 빠르게 만든다.
+- `union`: 두 학생의 대표가 다르면 두 집합을 합치고 전체 집합 수를 1 줄인다.
+- 정답: 모든 쌍을 처리한 뒤 남은 집합 수가 가능한 종교의 최대 가짓수이다.
+- 복잡도: 경로 압축과 union by size를 쓰면 시간 `O((N + M) α(N))`, 공간 `O(N)`이다.
 
 ### 2300 용액
 
