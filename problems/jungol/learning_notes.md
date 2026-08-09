@@ -44,6 +44,7 @@
 | 30 | [LCS 1차원 DP와 diagonal](#note-30-lcs-one-dimensional-dp) | [1220 최장 공통 부분서열](gold/1220_LongestCommonSubsequence.py) |
 | 31 | [DFS 메모이제이션과 재귀 제한](#note-31-dfs-memoization-recursion-limit) | [1024 내리막 길](gold/1024_DownhillPath.py) |
 | 32 | [크루스칼 임계값과 컴포넌트 메타데이터](#note-32-kruskal-threshold-component-metadata) | [3865 Ski Course Rating](platinum/3865_SkiCourseRating.py) |
+| 33 | [위상정렬](#note-33-topological-sort) | [1946 음악프로그램](gold/1946_MusicProgram.py) |
 
 ### 문제별 메모
 
@@ -73,6 +74,7 @@
 | [1220 최장 공통 부분서열](#problem-1220-longest-common-subsequence) | LCS, 1차원 DP, `diagonal` |
 | [1024 내리막 길](#problem-1024-downhill-path) | DFS, 메모이제이션, Top-down DP, 재귀 제한 |
 | [3865 Ski Course Rating](#problem-3865-ski-course-rating) | 크루스칼, Union-Find, 임계값, 컴포넌트별 미처리 시작점 수 |
+| [1946 음악프로그램](#problem-1946-music-program) | 위상정렬, 진입 차수, 사이클 판정 |
 
 ## 주제별 메모
 
@@ -1595,6 +1597,85 @@ col = current % N
 
 간선 정렬이 `O(MN log(MN))`이고 Union-Find 연산은 전체적으로 거의 `O(MN)`이다. 따라서 총 시간 복잡도는 `O(MN log(MN))`, 공간 복잡도는 `O(MN)`이다.
 
+## note-33-topological-sort
+
+### 위상정렬
+
+위상정렬은 방향 그래프에서 “먼저 해야 하는 것”이 있는 순서를 만드는 알고리즘입니다.
+
+조건이 이런 식으로 주어질 때 사용합니다.
+
+```text
+A는 B보다 먼저 와야 한다.
+B는 C보다 먼저 와야 한다.
+```
+
+이 조건은 방향 간선으로 표현합니다.
+
+```text
+A -> B
+B -> C
+```
+
+`indegree[x]`는 `x` 앞에 먼저 처리되어야 하는 정점 수입니다.
+
+```python
+graph = [[] for _ in range(N + 1)]
+indegree = [0] * (N + 1)
+```
+
+1946 음악프로그램에서는 PD가 정한 순서에서 이웃한 가수끼리 간선을 만듭니다.
+
+```python
+for order in orders:
+    for index in range(len(order) - 1):
+        before = order[index]
+        after = order[index + 1]
+
+        graph[before].append(after)
+        indegree[after] += 1
+```
+
+진입 차수가 0인 정점은 지금 바로 처리할 수 있습니다.
+
+```python
+queue = deque()
+
+for node in range(1, N + 1):
+    if indegree[node] == 0:
+        queue.append(node)
+```
+
+큐에서 정점을 하나 꺼내면, 그 정점 뒤에 와야 하는 정점들의 조건 하나가 해결됩니다.
+
+```python
+current = queue.popleft()
+
+for next_node in graph[current]:
+    indegree[next_node] -= 1
+
+    if indegree[next_node] == 0:
+        queue.append(next_node)
+```
+
+만약 모든 정점을 결과에 넣지 못했다면 사이클이 있다는 뜻입니다.
+
+```python
+if len(result) != N:
+    return []
+```
+
+1946에서는 순서에 모순이 있으면 `0`을 출력합니다.
+
+위상정렬 복잡도:
+
+```text
+시간: O(N + E)
+공간: O(N + E)
+```
+
+여기서 `E`는 방향 간선 수입니다.
+
 ## 문제별 메모
 
 ## problem-3337-shopping-mall
@@ -1962,3 +2043,19 @@ col = current % N
 | `pending_starts[root] = 0` | 이미 처리한 시작점이 이후 병합에서 중복 계산되는 것을 방지 |
 | `T == 1` | 시작한 칸만으로 조건을 만족하므로 난이도 합이 `0` |
 | `O(MN log(MN))` | 약 `2MN`개의 인접 간선을 정렬한 뒤 Union-Find로 처리 |
+
+## problem-1946-music-program
+
+### 1946 음악프로그램
+
+문제 파일: [1946_MusicProgram.py](gold/1946_MusicProgram.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [위상정렬](#note-33-topological-sort) | 여러 PD가 정한 부분 순서를 모두 만족하는 전체 순서를 만들기 위해 사용 |
+| 방향 간선 | `before -> after`로 먼저 나와야 하는 관계를 표현하기 위해 사용 |
+| `indegree` | 각 가수 앞에 아직 몇 명이 먼저 나와야 하는지 저장하기 위해 사용 |
+| 진입 차수 0 큐 | 지금 바로 순서에 넣을 수 있는 가수를 관리하기 위해 사용 |
+| `len(result) != N` | 모든 가수를 정렬하지 못했다면 사이클이나 모순이 있다는 뜻 |

@@ -7,6 +7,7 @@
 # 시간 복잡도: O(N + E)
 # 공간 복잡도: O(N + E)
 
+from collections import deque
 import sys
 
 
@@ -23,13 +24,47 @@ import sys
 
 
 def solution(N, orders):
-    # TODO: 그래프와 진입 차수를 만들고 위상정렬한다.
-    # return 정렬된 가수 목록, 불가능하면 빈 목록
-    pass
+    graph = [[] for _ in range(N + 1)]
+    indegree = [0] * (N + 1)
+
+    # PD가 정한 순서에서 서로 이웃한 가수 사이에 방향 간선을 만든다.
+    # 예: [1, 4, 3]이면 1 -> 4, 4 -> 3
+    for order in orders:
+        for index in range(len(order) - 1):
+            before = order[index]
+            after = order[index + 1]
+
+            graph[before].append(after)
+            indegree[after] += 1
+
+    queue = deque()
+
+    # 앞에 와야 하는 가수가 없는 가수부터 시작한다.
+    for singer in range(1, N + 1):
+        if indegree[singer] == 0:
+            queue.append(singer)
+
+    result = []
+
+    while queue:
+        current = queue.popleft()
+        result.append(current)
+
+        for next_singer in graph[current]:
+            indegree[next_singer] -= 1
+
+            if indegree[next_singer] == 0:
+                queue.append(next_singer)
+
+    # 모든 가수를 정렬하지 못했다면 순서 조건에 사이클이 있는 것이다.
+    if len(result) != N:
+        return []
+
+    return result
 
 
 if __name__ == "__main__":
-    input = sys.stdin.readline
+    input = sys.stdin.buffer.readline
 
     N, M = map(int, input().split())
     orders = [list(map(int, input().split()))[1:] for _ in range(M)]

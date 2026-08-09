@@ -116,6 +116,7 @@ monotone_stack
 | [1411 두 줄로 타일 깔기](silver/1411_TilingTwoRows.py) | silver | dp | `2×N` 판의 마지막 1칸/2칸을 기준으로 `dp[n] = dp[n-1] + 2*dp[n-2]`를 세운다 |
 | [1520 계단 오르기](silver/1520_ClimbingStairs.py) | silver | dp | 마지막 계단을 반드시 밟되, 연속 세 계단을 피하도록 이전 두 경우를 비교한다 |
 | [1863 종교](gold/1863_Religion.py) | gold5 | graph, disjoint_set, union_find | 같은 종교인 학생들을 union하고 마지막에 남은 집합 수를 센다 |
+| [1946 음악프로그램](gold/1946_MusicProgram.py) | gold | graph, topological_sort, queue | PD가 정한 순서를 방향 간선으로 만들고 위상정렬로 가능한 전체 순서를 구한다 |
 | [1370 회의실 배정](silver/1370_MeetingRoomAssignment.py) | silver2 | greedy, sorting | 종료 시간이 빠른 회의부터 선택해 한 회의실에 배정 가능한 회의 수를 최대로 만든다 |
 | [2581 예산](silver/2581_Budget.py) | silver | binary_search, parametric_search | 상한액 `cap`이 가능한지 판단하며 가능한 최대 상한액을 이분 탐색으로 찾는다 |
 | [2000 동전교환](silver/2000_CoinChange.py) | silver | dp, unbounded_knapsack | `dp[money]`에 금액을 만드는 최소 동전 수를 저장하고 마지막에 쓴 동전을 기준으로 갱신한다 |
@@ -311,6 +312,16 @@ monotone_stack
 - `union`: 두 학생의 대표가 다르면 두 집합을 합치고 전체 집합 수를 1 줄인다.
 - 정답: 모든 쌍을 처리한 뒤 남은 집합 수가 가능한 종교의 최대 가짓수이다.
 - 복잡도: 경로 압축과 union by size를 쓰면 시간 `O((N + M) α(N))`, 공간 `O(N)`이다.
+
+### 1946 음악프로그램
+
+- 핵심 관찰: “A가 B보다 먼저 나와야 한다”는 조건은 방향 간선 `A -> B`로 표현할 수 있다.
+- 접근 방향: 각 PD가 준 순서에서 이웃한 가수끼리 방향 간선을 만들고 위상정렬한다.
+- `indegree[x]`: `x`번 가수 앞에 아직 먼저 나와야 하는 가수 수를 저장한다.
+- 시작점: `indegree`가 0인 가수는 지금 바로 순서에 넣을 수 있으므로 큐에 넣는다.
+- 갱신: 가수 하나를 결과에 넣으면 그 가수 뒤에 와야 하는 가수들의 `indegree`를 1 줄인다.
+- 불가능 판단: 위상정렬 결과 길이가 `N`보다 작으면 순서 조건에 사이클이 있다는 뜻이므로 `0`을 출력한다.
+- 복잡도: 모든 가수와 순서 간선을 한 번씩 처리하므로 시간 `O(N + E)`, 공간 `O(N + E)`이다.
 
 ### 2300 용액
 
