@@ -6,6 +6,7 @@
 # 시간 복잡도: O(N^2 log N)
 # 공간 복잡도: O(N^2)
 
+import heapq
 import sys
 
 
@@ -22,13 +23,50 @@ import sys
 
 
 def solution(N, destination, costs):
-    # TODO: 다익스트라로 최소 비용과 경로를 구한다.
-    # return minimum_cost, path
-    pass
+    INF = 10**18
+
+    distance = [INF] * (N + 1)
+    previous = [0] * (N + 1)
+
+    distance[1] = 0
+    heap = [(0, 1)]
+
+    while heap:
+        current_cost, current_station = heapq.heappop(heap)
+
+        if current_cost > distance[current_station]:
+            continue
+
+        if current_station == destination:
+            break
+
+        for next_station in range(1, N + 1):
+            move_cost = costs[current_station - 1][next_station - 1]
+
+            if move_cost == 0:
+                continue
+
+            next_cost = current_cost + move_cost
+
+            if next_cost < distance[next_station]:
+                distance[next_station] = next_cost
+                previous[next_station] = current_station
+                heapq.heappush(heap, (next_cost, next_station))
+
+    path = []
+    station = destination
+
+    while station != 0:
+        path.append(station)
+        station = previous[station]
+
+    path.reverse()
+
+    return distance[destination], path
 
 
 if __name__ == "__main__":
-    input = sys.stdin.readline
+    input = sys.stdin.buffer.readline
 
     N, destination = map(int, input().split())
     costs = [list(map(int, input().split())) for _ in range(N)]
