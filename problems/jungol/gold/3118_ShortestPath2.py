@@ -1,5 +1,5 @@
 # JUNGOL 3118 최단경로2
-# 난이도: gold
+# 난이도: gold 3
 # 분류: graph, dijkstra, shortest_path
 # 핵심:
 #   음수가 아닌 가중치를 가진 방향 그래프에서 1번부터 N번까지의 최단 거리를 구한다.
@@ -20,10 +20,48 @@ import sys
 # - 꺼낸 거리가 이미 저장된 거리보다 크면 오래된 항목이므로 건너뛴다.
 # - N번 정점을 확정하면 조기 종료할 수 있다.
 
+import heapq
+
+INF = 10**18
 
 def solution(N, M, edges):
     # TODO: 우선순위 큐 다익스트라로 1번에서 N번까지의 최단 거리를 구한다.
-    pass
+    # step 1. 입력 받기
+    # 인접리스트로 그래프 표현
+    graph = [[] for _ in range(N+1)]
+
+    # 간선 가중치 넣기
+    for edge in edges:
+        u,v,w = edge
+        graph[u].append((v,w))
+
+    # step 2. 다익스트라 셋팅
+    start = 1
+
+    distance = [INF] * (N+1)
+    distance[start] = 0
+
+    pq = []
+    heapq.heappush(pq,(0,start)) # (거리, 정점)
+
+    # step3. 경로탐색 진행
+    while pq:
+        dist, now = heapq.heappop(pq)
+
+        # 이미 더 짧은 거리로 방문한 적 있으면 무시
+        if distance[now] < dist:
+            continue
+
+        # 현재 정점과 연결된 정점 확인
+        for next_node, cost in graph[now]:
+            new_dist = dist + cost
+
+            # 경로 갱신
+            if new_dist < distance[next_node]:
+                distance[next_node] = new_dist
+                heapq.heappush(pq,(new_dist,next_node))
+
+    return distance[N]
 
 
 if __name__ == "__main__":

@@ -1,38 +1,93 @@
 # JUNGOL 8465 리어카 경주
-# 난이도: gold
-# 분류: graph, disjoint_set, union_find
-# 핵심:
-#   연결 관계를 분리 집합으로 관리하며 같은 그룹인지 빠르게 판단한다.
-# 시간 복잡도: 입력 연산 수를 Q라 할 때 O(Q α(N))
-# 공간 복잡도: O(N)
+# 문제: https://jungol.co.kr/problem/8465
+# 난이도: Platinum 4
+# 분류: graph, reachability, topological_sort, dp
+# 시간 복잡도: O(N + M)
+# 공간 복잡도: O(N + M)
 
 import sys
+from collections import deque
 
 
-# 1. 문제 이해
-# - 이 문제는 연결되는 대상들을 그룹으로 합치고 연결 여부 또는 그룹 정보를 구한다.
-# - 정확한 필드 단위 입력 해석은 문제 원문의 연산 형식에 맞춰 작성한다.
+MOD = 1_000_000_000
 
 
-# 2. 아이디어
-# - parent[x]는 x가 속한 집합의 대표를 가리킨다.
-# - find에서는 경로 압축을 적용한다.
-# - union에서는 크기 또는 rank가 작은 트리를 큰 트리 아래에 붙인다.
+def reachable_from(start, graph):
+    visited = [False] * len(graph)
+    visited[start] = True
+    queue = [start]
+
+    for node in queue:
+        for next_node in graph[node]:
+            if not visited[next_node]:
+                visited[next_node] = True
+                queue.append(next_node)
+
+    return visited
 
 
-def solution(data):
-    # TODO:
-    # 1) 원문의 입력 형식대로 data를 파싱한다.
-    # 2) parent와 size/rank 배열을 만든다.
-    # 3) union/find 연산으로 정답을 계산한다.
-    pass
+def solution(N, roads):
+    graph = [[] for _ in range(N + 1)]
+    reverse_graph = [[] for _ in range(N + 1)]
+
+    for start, end in roads:
+        graph[start].append(end)
+        reverse_graph[end].append(start)
+
+    # 1번에서 도달할 수 있고 최종적으로 2번에 갈 수 있는 마을만 남긴다.
+    from_start = reachable_from(1, graph)
+    to_finish = reachable_from(2, reverse_graph)
+    relevant = [
+        from_start[node] and to_finish[node]
+        for node in range(N + 1)
+    ]
+
+    indegree = [0] * (N + 1)
+    relevant_count = 0
+
+    for node in range(1, N + 1):
+        if not relevant[node]:
+            continue
+        relevant_count += 1
+        for next_node in graph[node]:
+            if relevant[next_node]:
+                indegree[next_node] += 1
+
+    queue = deque(
+        node
+        for node in range(1, N + 1)
+        if relevant[node] and indegree[node] == 0
+    )
+    path_count = [0] * (N + 1)
+    path_count[1] = 1
+    processed_count = 0
+
+    while queue:
+        node = queue.popleft()
+        processed_count += 1
+
+        for next_node in graph[node]:
+            if not relevant[next_node]:
+                continue
+
+            # 평행 도로도 각각 다른 경로로 센다.
+            path_count[next_node] = (
+                path_count[next_node] + path_count[node]
+            ) % MOD
+            indegree[next_node] -= 1
+            if indegree[next_node] == 0:
+                queue.append(next_node)
+
+    if processed_count != relevant_count:
+        return "inf"
+
+    return path_count[2]
 
 
 if __name__ == "__main__":
-    data = list(map(int, sys.stdin.buffer.read().split()))
-    answer = solution(data)
+    input = sys.stdin.readline
 
-    if isinstance(answer, (list, tuple)):
-        print(*answer, sep="\n")
-    else:
-        print(answer)
+    N, M = map(int, input().split())
+    roads = [tuple(map(int, input().split())) for _ in range(M)]
+
+    print(solution(N, roads))

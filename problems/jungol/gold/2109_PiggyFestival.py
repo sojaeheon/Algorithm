@@ -8,6 +8,7 @@
 # 공간 복잡도: O(N + M)
 
 import sys
+import heapq
 
 
 # 1. 문제 이해
@@ -23,8 +24,38 @@ import sys
 
 
 def solution(N, M, X, roads):
-    # TODO: 원본/역방향 그래프를 만들고 다익스트라를 두 번 실행한다.
-    pass
+    graph = [[] for _ in range(N + 1)]
+    reverse_graph = [[] for _ in range(N + 1)]
+
+    for start, end, time in roads:
+        graph[start].append((end, time))
+        reverse_graph[end].append((start, time))
+
+    def dijkstra(start, edges):
+        distances = [float("inf")] * (N + 1)
+        distances[start] = 0
+        queue = [(0, start)]
+
+        while queue:
+            distance, node = heapq.heappop(queue)
+            if distance != distances[node]:
+                continue
+
+            for next_node, cost in edges[node]:
+                next_distance = distance + cost
+                if next_distance < distances[next_node]:
+                    distances[next_node] = next_distance
+                    heapq.heappush(queue, (next_distance, next_node))
+
+        return distances
+
+    distances_from_x = dijkstra(X, graph)
+    distances_to_x = dijkstra(X, reverse_graph)
+
+    return max(
+        distances_from_x[village] + distances_to_x[village]
+        for village in range(1, N + 1)
+    )
 
 
 if __name__ == "__main__":
