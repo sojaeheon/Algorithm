@@ -1,5 +1,5 @@
 # JUNGOL 2097 지하철
-# 난이도: gold
+# 난이도: gold3
 # 분류: graph, dijkstra, shortest_path, path_reconstruction
 # 핵심:
 #   1번 역에서 목적 역까지의 최소 비용을 구하고 이전 역을 역추적한다.
