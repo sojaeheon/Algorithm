@@ -172,7 +172,38 @@ for k in range(1, n + 1):
             ...
 ```
 
-## 10. 정리
+## 10. Multi-source Dijkstra
+
+시작점이 여러 개이고 그중 가장 가까운 시작점으로부터의 최단 거리가 필요하면 모든 시작점을 거리 `0`으로 힙에 넣는다.
+
+```python
+dist = [INF] * (n + 1)
+heap = []
+
+for start in starts:
+    dist[start] = 0
+    heapq.heappush(heap, (0, start))
+```
+
+이후 과정은 일반 Dijkstra와 같다. 시작점마다 따로 실행하지 않고 한 번의 탐색으로 가장 유리한 시작점을 선택할 수 있다.
+
+## 11. Minimax 경로
+
+일반 최단 경로는 간선 비용의 합을 최소화한다.
+
+```python
+next_cost = current_cost + weight
+```
+
+경로에 포함된 간선 중 가장 큰 비용을 최소화해야 한다면 `max()`로 갱신한다.
+
+```python
+next_cost = max(current_cost, weight)
+```
+
+경로를 연장해도 현재 최댓값이 작아지지 않으므로 Dijkstra 방식으로 탐색할 수 있다.
+
+## 12. 정리
 
 최단 경로는 조건을 보고 알고리즘을 고르는 것이 가장 중요하다. 간선 비용이 모두 같으면 BFS, 음수 없는 한 시작점 문제는 Dijkstra, 음수 간선이 있으면 Bellman-Ford, 모든 쌍이면 Floyd-Warshall을 사용한다.
 
@@ -181,3 +212,4 @@ for k in range(1, n + 1):
 | 문제 | 적용 방법 |
 | --- | --- |
 | [프로그래머스 72413 합승 택시 요금](../../../problems/programmers/lv3/SharedTaxiFare.py) | `s`, `a`, `b`에서 다익스트라를 실행하고 가능한 합승 종료 지점을 모두 비교한다 |
+| [프로그래머스 118669 등산코스 정하기](../../../problems/programmers/lv3/ChooseHikingCourse.py) | 모든 출입구를 시작점으로 넣고 `max(현재 intensity, 간선 비용)`으로 minimax 경로를 구한다 |
