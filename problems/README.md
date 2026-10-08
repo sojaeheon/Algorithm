@@ -7,7 +7,13 @@
 | 폴더 | 내용 |
 | --- | --- |
 | `jungol` | JUNGOL 문제 풀이 |
+| `programmers` | 프로그래머스 문제 풀이 |
 | `review` | 다시 풀 문제, 틀린 문제, 헷갈린 문제 |
+
+## 플랫폼별 풀이
+
+- [JUNGOL 풀이 기록](jungol/README.md)
+- [프로그래머스 풀이 기록](programmers/README.md)
 
 ## 파일 이름
 

@@ -106,7 +106,6 @@ monotone_stack
 | 문제 | 난이도 | 분류 | 핵심 |
 | --- | --- | --- | --- |
 | [3865 Ski Course Rating](platinum/3865_SkiCourseRating.py) | platinum1 | kruskal, union_find, offline_query | 높이 차가 작은 간선부터 컴포넌트를 합쳐 각 시작점이 `T`개 칸에 도달하는 최소 난이도를 결정한다 |
-| [3924 Superbull](gold/3924_Superbull.py) | gold | graph, mst, prim, maximum_spanning_tree | XOR로 간선 비용을 계산하는 완전 그래프에서 배열 기반 Prim으로 최대 신장 트리를 구한다 |
 | [1024 내리막 길](gold/1024_DownhillPath.py) | gold | dfs, dp, memoization | 현재 칸에서 도착점까지 가는 경로 수를 DFS로 계산하고 칸별 결과를 재사용한다 |
 | [1220 최장 공통 부분서열](gold/1220_LongestCommonSubsequence.py) | gold | dp, string, lcs | 2차원 LCS 점화식에서 필요한 이전 행만 1차원 배열에 저장한다 |
 | [1871 줄세우기](gold/1871_LineUp.py) | gold | dp, lis | 현재 순서를 유지할 수 있는 가장 긴 증가 부분 수열을 남기고 나머지 아이들만 옮긴다 |
@@ -136,6 +135,26 @@ monotone_stack
 | [2587 달리기](platinum/2587_Running.py) | platinum | coordinate_compression, fenwick_tree | 앞선 선수 중 현재 선수보다 실력이 좋은 선수 수를 Fenwick Tree로 구한다 |
 | [1681 해밀턴 순환회로](silver/1681_HamiltonianCycle.py) | silver1 | dfs, backtracking, graph, tsp | 1번 정점에서 출발해 모든 정점을 한 번씩 방문하고 다시 1번 정점으로 돌아오는 최소 비용을 찾는다 |
 | [1545 해밀턴 순환회로 2](platinum/1545_HamiltonianCycle2.py) | platinum5 | bitmask, dp, graph, tsp | 방문 상태를 비트마스크로 표현하고 `dp[mask][current]`로 최소 비용을 저장한다 |
+| [1697 큐](bronze/1697_Queue.cpp) | bronze5 | queue, stl | STL `queue`로 삽입, 삭제, 크기 확인 명령을 FIFO 순서로 처리한다 |
+| [8551 Tutorial: STL Sort 1](bronze/8551_STLSort1.cpp) | bronze5 | sorting, stl | `sort(first, last)`의 반열린 구간을 이해하고 부분 구간과 전체 배열을 정렬한다 |
+| [8553 Tutorial: STL Sort 2](bronze/8553_STLSort2.cpp) | bronze5 | sorting, comparator | 비교 함수로 일의 자리, 십의 자리, 백의 자리 순 정렬 기준을 만든다 |
+| [8557 Tutorial: STL Pair](bronze/8557_STLPair.cpp) | bronze5 | pair, sorting, stl | 좌표를 `pair`로 저장하고 기본 사전식 정렬을 사용한다 |
+| [2097 지하철](gold/2097_Subway.py) | gold3 | dijkstra, path_reconstruction | 다익스트라로 최소 비용을 구하고 `previous` 배열을 역추적해 이동 경로를 복원한다 |
+| [2109 꿀꿀이 축제](gold/2109_PiggyFestival.py) | gold3 | dijkstra, reverse_graph | 원본 그래프와 역방향 그래프에서 각각 다익스트라를 실행해 왕복 최단 시간을 구한다 |
+| [2306 두 용액](gold/2306_TwoSolutions.py) | gold5 | sorting, two_pointer | 정렬된 배열의 양끝에서 포인터를 움직여 합이 0에 가장 가까운 두 용액을 찾는다 |
+| [2497 수열](silver/2497_Sequence.py) | silver4 | sliding_window, prefix_sum | 고정 길이 구간에서 빠지는 값과 들어오는 값만 반영해 최대 구간 합을 구한다 |
+| [2606 토마토(초)](gold/2606_TomatoElementary.py) | gold5 | bfs, queue, simulation | 모든 익은 토마토에서 3차원 6방향 다중 시작점 BFS를 수행한다 |
+| [2993 리조트](gold/2993_Resort.py) | gold4 | dp, memoization | 날짜와 쿠폰 수를 상태로 두고 이용권 구매와 쿠폰 사용 비용의 최솟값을 구한다 |
+| [3118 최단경로2](gold/3118_ShortestPath2.py) | gold3 | graph, dijkstra | 인접 리스트와 최소 힙으로 1번 정점에서 N번 정점까지의 최단 거리를 구한다 |
+| [3297 구간의 합(PURQ) 1](gold/3297_RangeSumPURQ1.py) | gold1 | fenwick_tree, purq | 값 변경분을 Fenwick Tree에 반영하고 두 누적합의 차로 구간 합을 계산한다 |
+| [5205 장난감조립](gold/5205_ToyAssembly.py) | gold2 | topological_sort, dp | 부품 관계를 위상정렬하며 완제품에 필요한 기본 부품 수를 전파한다 |
+| [8465 리어카 경주](platinum/8465_CartRace.py) | platinum4 | topological_sort, dp, cycle | 출발점에서 도착점까지 유효한 부분 그래프만 남겨 경로 수와 무한 경로 여부를 판정한다 |
+
+## 미완성 문제
+
+| 문제 | 현재 상태 | 다음 작업 |
+| --- | --- | --- |
+| [3924 Superbull](gold/3924_Superbull.py) | 풀이 뼈대 | 배열 기반 Prim으로 최대 신장 트리 구현 |
 
 ## 오늘 푼 문제
 

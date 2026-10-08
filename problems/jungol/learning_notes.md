@@ -1,6 +1,6 @@
-# JUNGOL 학습 메모
+# 알고리즘 문제 풀이 학습 메모
 
-문제를 풀면서 헷갈렸던 문법, 구현 패턴, 시간/메모리 판단을 따로 모아두는 문서입니다.
+JUNGOL과 프로그래머스 문제를 풀면서 헷갈렸던 문법, 구현 패턴, 시간/메모리 판단을 따로 모아두는 문서입니다.
 
 ## 목차
 
@@ -45,6 +45,7 @@
 | 31 | [DFS 메모이제이션과 재귀 제한](#note-31-dfs-memoization-recursion-limit) | [1024 내리막 길](gold/1024_DownhillPath.py) |
 | 32 | [크루스칼 임계값과 컴포넌트 메타데이터](#note-32-kruskal-threshold-component-metadata) | [3865 Ski Course Rating](platinum/3865_SkiCourseRating.py) |
 | 33 | [위상정렬](#note-33-topological-sort) | [1946 음악프로그램](gold/1946_MusicProgram.py) |
+| 34 | [필요한 시작점에서 다익스트라 반복 실행](#note-34-repeated-dijkstra) | [72413 합승 택시 요금](../programmers/lv3/SharedTaxiFare.py) |
 
 ### 문제별 메모
 
@@ -75,6 +76,7 @@
 | [1024 내리막 길](#problem-1024-downhill-path) | DFS, 메모이제이션, Top-down DP, 재귀 제한 |
 | [3865 Ski Course Rating](#problem-3865-ski-course-rating) | 크루스칼, Union-Find, 임계값, 컴포넌트별 미처리 시작점 수 |
 | [1946 음악프로그램](#problem-1946-music-program) | 위상정렬, 진입 차수, 사이클 판정 |
+| [72413 합승 택시 요금](#problem-72413-shared-taxi-fare) | 다익스트라 3번, 합승 종료 지점, 무방향 그래프 |
 
 ## 주제별 메모
 
@@ -2059,3 +2061,53 @@ if len(result) != N:
 | `indegree` | 각 가수 앞에 아직 몇 명이 먼저 나와야 하는지 저장하기 위해 사용 |
 | 진입 차수 0 큐 | 지금 바로 순서에 넣을 수 있는 가수를 관리하기 위해 사용 |
 | `len(result) != N` | 모든 가수를 정렬하지 못했다면 사이클이나 모순이 있다는 뜻 |
+
+## note-34-repeated-dijkstra
+
+### 필요한 시작점에서 다익스트라 반복 실행
+
+모든 정점 쌍의 최단 거리가 필요한 것처럼 보여도, 실제 계산에 사용하는 시작점이 몇 개뿐이라면 그 시작점에서만 다익스트라를 실행할 수 있습니다.
+
+합승 택시 요금에서 합승 종료 지점을 `split`이라고 하면 필요한 거리는 세 종류입니다.
+
+```text
+s -> split
+split -> a
+split -> b
+```
+
+택시 노선은 양방향이므로 `split -> a`는 `a -> split`과 같고, `split -> b`는 `b -> split`과 같습니다. 따라서 `s`, `a`, `b`에서 다익스트라를 한 번씩 실행하면 충분합니다.
+
+```python
+from_s = dijkstra(s)
+from_a = dijkstra(a)
+from_b = dijkstra(b)
+```
+
+모든 합승 종료 후보를 확인하는 계산은 다음과 같습니다.
+
+```python
+for split in range(1, n + 1):
+    total_fare = from_s[split] + from_a[split] + from_b[split]
+    answer = min(answer, total_fare)
+```
+
+`split == s`인 경우에는 공동 이동 요금이 `0`이므로 처음부터 따로 이동하는 경우도 자동으로 포함됩니다.
+
+복잡도는 다익스트라를 세 번 실행하므로 `O(3(N + E) log N)`이고, 상수를 제외하면 `O((N + E) log N)`입니다. 인접 리스트와 거리 배열에 필요한 공간은 `O(N + E)`입니다.
+
+## problem-72413-shared-taxi-fare
+
+### 72413 합승 택시 요금
+
+문제 파일: [SharedTaxiFare.py](../programmers/lv3/SharedTaxiFare.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [필요한 시작점에서 다익스트라 반복 실행](#note-34-repeated-dijkstra) | 모든 지점 쌍 대신 실제로 필요한 `s`, `a`, `b`의 최단 거리만 구하기 위해 사용 |
+| 합승 종료 지점 `split` | 공동 이동 구간과 두 개의 개별 이동 구간으로 전체 요금을 나누기 위해 사용 |
+| `from_s[split] + from_a[split] + from_b[split]` | 특정 지점에서 헤어질 때의 전체 최소 요금을 계산 |
+| `split == s` | 합승하지 않고 출발지부터 따로 이동하는 경우를 별도 처리 없이 포함 |
+| 양방향 간선 | `a -> split`을 `split -> a` 거리로 사용할 수 있는 근거 |

@@ -7,6 +7,7 @@
 - [알고리즘 전체 목차](algorithm/README.md)
 - [문제 풀이 폴더](problems/README.md)
 - [JUNGOL 풀이 기록](problems/jungol/README.md)
+- [프로그래머스 풀이 기록](problems/programmers/README.md)
 - [알고리즘 문서 템플릿](algorithm/00_templates/algorithm_note_template.md)
 - [시간복잡도와 공간복잡도](algorithm/00_templates/complexity/complexity.md)
 - [Python 입출력 템플릿](algorithm/00_templates/python_io/python_io.md)
