@@ -34,20 +34,15 @@ import heapq
 # 4) 섞은 값을 힙에 넣고 횟수를 증가시킨다.
 # 5) 성공하면 횟수, 불가능하면 -1을 반환한다.
 
-import heapq
-
 def solution(scoville, K):
-    # TODO: 최소 힙을 이용해 필요한 최소 혼합 횟수를 구한다.
-    hp = []
-
+    hp = scoville[:]
+    heapq.heapify(hp)
     answer = 0
-    
-    for s in scoville:
-        heapq.heappush(hp,s)
 
     while hp[0] < K:
         if len(hp) < 2:
             return -1
+
         answer += 1
 
         first = heapq.heappop(hp)
@@ -55,12 +50,9 @@ def solution(scoville, K):
 
         mix_food = first + second * 2
 
-        heapq.heappush(hp,mix_food)
+        heapq.heappush(hp, mix_food)
 
     return answer
-
-
-    
 
 if __name__ == "__main__":
     print(solution([1, 2, 3, 9, 10, 12], 7))  # 예상: 2
