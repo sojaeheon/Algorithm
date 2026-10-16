@@ -1,6 +1,6 @@
-# JUNGOL 학습 메모
+# 알고리즘 문제 풀이 학습 메모
 
-문제를 풀면서 헷갈렸던 문법, 구현 패턴, 시간/메모리 판단을 따로 모아두는 문서입니다.
+JUNGOL과 프로그래머스 문제를 풀면서 헷갈렸던 문법, 구현 패턴, 시간/메모리 판단을 따로 모아두는 문서입니다.
 
 ## 목차
 
@@ -45,6 +45,8 @@
 | 31 | [DFS 메모이제이션과 재귀 제한](#note-31-dfs-memoization-recursion-limit) | [1024 내리막 길](gold/1024_DownhillPath.py) |
 | 32 | [크루스칼 임계값과 컴포넌트 메타데이터](#note-32-kruskal-threshold-component-metadata) | [3865 Ski Course Rating](platinum/3865_SkiCourseRating.py) |
 | 33 | [위상정렬](#note-33-topological-sort) | [1946 음악프로그램](gold/1946_MusicProgram.py) |
+| 34 | [필요한 시작점에서 다익스트라 반복 실행](#note-34-repeated-dijkstra) | [72413 합승 택시 요금](../programmers/lv3/SharedTaxiFare.py) |
+| 35 | [Multi-source minimax Dijkstra](#note-35-multi-source-minimax-dijkstra) | [118669 등산코스 정하기](../programmers/lv3/ChooseHikingCourse.py) |
 
 ### 문제별 메모
 
@@ -75,6 +77,8 @@
 | [1024 내리막 길](#problem-1024-downhill-path) | DFS, 메모이제이션, Top-down DP, 재귀 제한 |
 | [3865 Ski Course Rating](#problem-3865-ski-course-rating) | 크루스칼, Union-Find, 임계값, 컴포넌트별 미처리 시작점 수 |
 | [1946 음악프로그램](#problem-1946-music-program) | 위상정렬, 진입 차수, 사이클 판정 |
+| [72413 합승 택시 요금](#problem-72413-shared-taxi-fare) | 다익스트라 3번, 합승 종료 지점, 무방향 그래프 |
+| [118669 등산코스 정하기](#problem-118669-choose-hiking-course) | Multi-source Dijkstra, minimax 경로, 출입구·산봉우리 제한 |
 
 ## 주제별 메모
 
@@ -2059,3 +2063,112 @@ if len(result) != N:
 | `indegree` | 각 가수 앞에 아직 몇 명이 먼저 나와야 하는지 저장하기 위해 사용 |
 | 진입 차수 0 큐 | 지금 바로 순서에 넣을 수 있는 가수를 관리하기 위해 사용 |
 | `len(result) != N` | 모든 가수를 정렬하지 못했다면 사이클이나 모순이 있다는 뜻 |
+
+## note-34-repeated-dijkstra
+
+### 필요한 시작점에서 다익스트라 반복 실행
+
+모든 정점 쌍의 최단 거리가 필요한 것처럼 보여도, 실제 계산에 사용하는 시작점이 몇 개뿐이라면 그 시작점에서만 다익스트라를 실행할 수 있습니다.
+
+합승 택시 요금에서 합승 종료 지점을 `split`이라고 하면 필요한 거리는 세 종류입니다.
+
+```text
+s -> split
+split -> a
+split -> b
+```
+
+택시 노선은 양방향이므로 `split -> a`는 `a -> split`과 같고, `split -> b`는 `b -> split`과 같습니다. 따라서 `s`, `a`, `b`에서 다익스트라를 한 번씩 실행하면 충분합니다.
+
+```python
+from_s = dijkstra(s)
+from_a = dijkstra(a)
+from_b = dijkstra(b)
+```
+
+모든 합승 종료 후보를 확인하는 계산은 다음과 같습니다.
+
+```python
+for split in range(1, n + 1):
+    total_fare = from_s[split] + from_a[split] + from_b[split]
+    answer = min(answer, total_fare)
+```
+
+`split == s`인 경우에는 공동 이동 요금이 `0`이므로 처음부터 따로 이동하는 경우도 자동으로 포함됩니다.
+
+복잡도는 다익스트라를 세 번 실행하므로 `O(3(N + E) log N)`이고, 상수를 제외하면 `O((N + E) log N)`입니다. 인접 리스트와 거리 배열에 필요한 공간은 `O(N + E)`입니다.
+
+## problem-72413-shared-taxi-fare
+
+### 72413 합승 택시 요금
+
+문제 파일: [SharedTaxiFare.py](../programmers/lv3/SharedTaxiFare.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [필요한 시작점에서 다익스트라 반복 실행](#note-34-repeated-dijkstra) | 모든 지점 쌍 대신 실제로 필요한 `s`, `a`, `b`의 최단 거리만 구하기 위해 사용 |
+| 합승 종료 지점 `split` | 공동 이동 구간과 두 개의 개별 이동 구간으로 전체 요금을 나누기 위해 사용 |
+| `from_s[split] + from_a[split] + from_b[split]` | 특정 지점에서 헤어질 때의 전체 최소 요금을 계산 |
+| `split == s` | 합승하지 않고 출발지부터 따로 이동하는 경우를 별도 처리 없이 포함 |
+| 양방향 간선 | `a -> split`을 `split -> a` 거리로 사용할 수 있는 근거 |
+
+## note-35-multi-source-minimax-dijkstra
+
+### Multi-source minimax Dijkstra
+
+시작점이 여러 개라면 각 시작점에서 다익스트라를 따로 실행하지 않고, 모든 시작점을 거리 `0`으로 힙에 함께 넣을 수 있습니다.
+
+```python
+for gate in gates:
+    intensity[gate] = 0
+    heapq.heappush(heap, (0, gate))
+```
+
+그러면 `intensity[node]`는 어떤 출입구에서 출발하든 상관없이 `node`까지 갈 때 만들 수 있는 최소 intensity가 됩니다.
+
+일반 최단 경로는 간선 비용을 더하지만, minimax 경로는 지금까지 지난 간선 중 최댓값을 유지합니다.
+
+```python
+# 일반 최단 경로
+next_cost = current_cost + weight
+
+# 등산코스의 minimax 경로
+next_intensity = max(current_intensity, weight)
+```
+
+경로를 연장해도 `max()` 결과가 작아질 수 없으므로, 작은 intensity부터 처리하는 다익스트라의 원리를 그대로 적용할 수 있습니다.
+
+등산코스의 시작과 끝에 관한 제한은 탐색 과정에서 처리합니다.
+
+```python
+# 산봉우리는 코스의 끝이므로 더 이동하지 않는다.
+if current_node in summit_set:
+    continue
+
+# 출발 이후 다른 출입구를 지나가지 않는다.
+if next_node in gate_set:
+    continue
+```
+
+등산로가 양방향이므로 출입구에서 산봉우리까지 올라간 경로를 반대로 이동하면 같은 출입구로 돌아올 수 있습니다. 같은 간선을 다시 지나므로 왕복 intensity도 편도의 intensity와 같습니다.
+
+시간 복잡도는 `O((N + E) log N)`, 공간 복잡도는 `O(N + E)`입니다.
+
+## problem-118669-choose-hiking-course
+
+### 118669 등산코스 정하기
+
+문제 파일: [ChooseHikingCourse.py](../programmers/lv3/ChooseHikingCourse.py)
+
+배운 내용:
+
+| 주제 | 이유 |
+| --- | --- |
+| [Multi-source minimax Dijkstra](#note-35-multi-source-minimax-dijkstra) | 여러 출입구 중 가장 유리한 출발점을 한 번의 탐색으로 선택하기 위해 사용 |
+| `max(current_intensity, weight)` | 이동 시간의 합이 아닌 경로에서 가장 큰 간선 비용을 관리 |
+| 산봉우리에서 탐색 중단 | 한 코스에서 산봉우리를 하나만 방문하도록 보장 |
+| 다음 지점이 출입구면 건너뛰기 | 출발 이후 다른 출입구를 중간에 통과하는 잘못된 코스를 방지 |
+| `(intensity, summit)` 비교 | intensity가 같을 때 번호가 작은 산봉우리를 선택 |
+| 양방향 경로의 역방향 이용 | 편도 최적 경로를 그대로 되돌아가 같은 출입구에서 왕복을 끝낼 수 있음 |
