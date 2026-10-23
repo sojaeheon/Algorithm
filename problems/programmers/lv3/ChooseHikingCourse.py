@@ -8,7 +8,7 @@
 # 시간 복잡도: O((N + E) log N)
 # 공간 복잡도: O(N + E)
 
-import heapq
+
 
 
 # 1. 문제 이해
@@ -49,6 +49,7 @@ import heapq
 # 7) 기존 intensity보다 작으면 갱신하고 힙에 넣는다.
 # 8) 산봉우리를 번호순으로 확인해 intensity가 가장 작은 답을 반환한다.
 
+import heapq
 
 def solution(n, paths, gates, summits):
     graph = [[] for _ in range(n + 1)]
