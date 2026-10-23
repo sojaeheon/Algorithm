@@ -155,6 +155,7 @@ monotone_stack
 | 문제 | 현재 상태 | 다음 작업 |
 | --- | --- | --- |
 | [3924 Superbull](gold/3924_Superbull.py) | 풀이 뼈대 | 배열 기반 Prim으로 최대 신장 트리 구현 |
+| [1440 가장 가까운 공통조상 찾기](gold/1440_NearestCommonAncestor.py) | 풀이 뼈대 | 풀이 작성 |
 
 ## 오늘 푼 문제
 
